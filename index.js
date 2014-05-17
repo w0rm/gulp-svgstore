@@ -11,8 +11,10 @@ module.exports = function (config) {
 
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svg-defs.svg'
+  var onlySvg = config.onlySvg || false
   var combinedDoc = new libxml.Document()
-  var defs = combinedDoc.node('svg').node('defs')
+  var svg = combinedDoc.node('svg')
+  var defs = svg.node('defs')
 
   combinedDoc.setDtd('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
 
@@ -38,7 +40,7 @@ module.exports = function (config) {
 
       this.push(new gutil.File({
         path: fileName
-      , contents: new Buffer(combinedDoc.toString())
+      , contents: new Buffer(onlySvg ? svg.toString() : combinedDoc.toString())
       }))
 
       cb(null)

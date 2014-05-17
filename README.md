@@ -1,7 +1,13 @@
 gulp-svgstore
 =============
 
-Combine svg files into one with defs
+Combine svg files into one with defs. Read more about this in [CSS Tricks article](http://css-tricks.com/svg-sprites-use-better-icon-fonts/).
+
+## Options:
+
+* fileName — the name of result file
+* prefix — prefix for ids of the defs child elements
+* onlySvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE`
 
 
 ## Usage
@@ -9,21 +15,16 @@ Combine svg files into one with defs
 The following script will combine circle.svg and square.svg into single svg file with defs.
 
 ```
-var svgstore = require('./index')
+var svgstore = require('gulp-svgstore')
 var gulp = require('gulp')
 var svgmin = require('gulp-svgmin')
-
 gulp.task('default', function () {
-
   return gulp.src('test/fixtures/*.svg')
              .pipe(svgmin())
-             .pipe(svgstore({fileName: 'icons.svg', prefix: 'icon-'}))
+             .pipe(svgstore({fileName: 'icons.svg', prefix: 'icon-', onlySvg: false}))
              .pipe(gulp.dest('test/'))
-
 })
 ```
-
-
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -39,4 +40,3 @@ gulp.task('default', function () {
   </defs>
 </svg>
 ```
-
