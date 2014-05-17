@@ -1,0 +1,28 @@
+{
+  "name": "gulp-svgstore",
+  "version": "0.0.1",
+  "description": "Combine svg files into one with defs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/w0rm/gulp-svgstore"
+  },
+  "author": "Andrey Kuzmin (unsoundscapes@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/w0rm/gulp-svgstore/issues"
+  },
+  "homepage": "https://github.com/w0rm/gulp-svgstore",
+  "dependencies": {
+    "gulp-util": "^2.2.14",
+    "libxmljs": "^0.9.0",
+    "through2": "^0.4.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.6.2",
+    "gulp-svgmin": "^0.4.5"
+  }
+}
