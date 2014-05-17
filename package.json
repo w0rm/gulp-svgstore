@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git://github.com/w0rm/gulp-svgstore"
   },
-  "author": "Andrey Kuzmin (unsoundscapes@gmail.com)",
+  "author": {
+    "name": "Andrey Kuzmin",
+    "email": "unsoundscapes@gmail.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/w0rm/gulp-svgstore/issues"
@@ -24,5 +27,11 @@
   "devDependencies": {
     "gulp": "^3.6.2",
     "gulp-svgmin": "^0.4.5"
-  }
+  },
+  "keywords": [
+    "gulp",
+    "svg",
+    "icon",
+    "sprite"
+  ]
 }
