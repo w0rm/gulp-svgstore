@@ -28,6 +28,7 @@ module.exports = function (config) {
       var g = libxml.Element(combinedDoc, 'g').attr({id: idAttr})
 
       contents.forEach(function (child) {
+        child.namespace(null)
         g.addChild(child)
       })
 
