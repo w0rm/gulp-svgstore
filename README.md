@@ -32,10 +32,10 @@ gulp.task('default', function () {
 <svg>
   <defs>
     <g id="icon-circle">
-      <circle xmlns="http://www.w3.org/2000/svg" fill="#fff" stroke="#1D1D1B" stroke-miterlimit="10" cx="20" cy="20" r="10"/>
+      <circle fill="#fff" stroke="#1D1D1B" stroke-miterlimit="10" cx="20" cy="20" r="10"/>
     </g>
     <g id="icon-square">
-      <path xmlns="http://www.w3.org/2000/svg" fill="#fff" stroke="#1D1D1B" stroke-miterlimit="10" d="M10 10h20v20h-20z"/>
+      <path fill="#fff" stroke="#1D1D1B" stroke-miterlimit="10" d="M10 10h20v20h-20z"/>
     </g>
   </defs>
 </svg>
