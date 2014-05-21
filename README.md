@@ -8,7 +8,7 @@ Combine svg files into one with defs. Read more about this in [CSS Tricks articl
 * fileName — the name of result file
 * prefix — prefix for ids of the defs child elements
 * onlySvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE`
-
+* emptyFills - remove all fill="none" so they can be changed in css
 
 ## Usage
 

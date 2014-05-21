@@ -6,7 +6,11 @@ gulp.task('default', function () {
 
   return gulp.src('test/fixtures/*.svg')
              .pipe(svgmin())
-             .pipe(svgstore({fileName: 'icons.svg', prefix: 'icon-', onlySvg: true}))
+             .pipe(svgstore({ fileName: 'icons.svg'
+                            , prefix: 'icon-'
+                            , onlySvg: true
+                            , emptyFills: true
+                            }))
              .pipe(gulp.dest('test/'))
 
 })

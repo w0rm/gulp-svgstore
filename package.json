@@ -1,6 +1,6 @@
 {
   "name": "gulp-svgstore",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Combine svg files into one with defs",
   "main": "index.js",
   "scripts": {

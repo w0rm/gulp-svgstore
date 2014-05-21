@@ -12,6 +12,8 @@ module.exports = function (config) {
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svg-defs.svg'
   var onlySvg = config.onlySvg || false
+  var emptyFills = config.emptyFills || false
+
   var combinedDoc = new libxml.Document()
   var svg = combinedDoc.node('svg')
   var defs = svg.node('defs')
@@ -38,6 +40,12 @@ module.exports = function (config) {
     }
 
   , function flush (cb) {
+
+      if (emptyFills) {
+        combinedDoc.find('//*[@fill="none"]').forEach(function (child) {
+          child.attr('fill').remove()
+        })
+      }
 
       this.push(new gutil.File({
         path: fileName
