@@ -16,6 +16,7 @@ module.exports = function (config) {
 
   var combinedDoc = new libxml.Document()
   var svg = combinedDoc.node('svg')
+  svg.attr({xmlns: 'http://www.w3.org/2000/svg'})
   var defs = svg.node('defs')
 
   combinedDoc.setDtd('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
