@@ -1,7 +1,7 @@
 gulp-svgstore
 =============
 
-Combine svg files into one with <symbol> elements.
+Combine svg files into one with `<symbol>` elements.
 Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-good-choice-icons/).
 
 ## Caution:
@@ -19,7 +19,7 @@ I plan to add tests and then freeze api.
 ## Usage
 
 The following script will combine circle.svg and square.svg into single svg file with
-<symbol> elements.
+`<symbol>` elements.
 
 ```
 var svgstore = require('gulp-svgstore')
