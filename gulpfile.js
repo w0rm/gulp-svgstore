@@ -8,7 +8,7 @@ gulp.task('default', function () {
              .pipe(svgmin())
              .pipe(svgstore({ fileName: 'icons.svg'
                             , prefix: 'icon-'
-                            , onlySvg: true
+                            , inlineSvg: false
                             , emptyFills: true
                             }))
              .pipe(gulp.dest('test/'))

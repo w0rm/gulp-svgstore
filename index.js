@@ -1,5 +1,3 @@
-'use strict';
-
 var libxml = require('libxmljs')
 var path = require('path')
 var through2 = require('through2')
@@ -11,15 +9,17 @@ module.exports = function (config) {
 
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svg-defs.svg'
-  var onlySvg = config.onlySvg || false
+  var inlineSvg = config.inlineSvg || config.onlySvg || false
   var emptyFills = config.emptyFills || false
 
   var combinedDoc = new libxml.Document()
   var svg = combinedDoc.node('svg')
-  svg.attr({xmlns: 'http://www.w3.org/2000/svg'})
-  var defs = svg.node('defs')
+  svg.attr({ xmlns: 'http://www.w3.org/2000/svg' })
 
-  combinedDoc.setDtd('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
+  combinedDoc.setDtd( 'svg'
+                    , '-//W3C//DTD SVG 1.1//EN'
+                    , 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'
+                    )
 
   return through2.obj(
 
@@ -28,14 +28,17 @@ module.exports = function (config) {
       var xmlDoc = libxml.parseXml(file.contents.toString('utf8'))
       var contents = xmlDoc.root().childNodes()
       var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
-      var g = libxml.Element(combinedDoc, 'g').attr({id: idAttr})
+      var viewBoxAttr = xmlDoc.root().attr('viewBox').value()
+      var symbol = libxml.Element(combinedDoc, 'symbol')
+
+      symbol.attr({ id: idAttr, viewBox: viewBoxAttr })
 
       contents.forEach(function (child) {
         child.namespace(null)
-        g.addChild(child)
+        symbol.addChild(child)
       })
 
-      defs.addChild(g)
+      svg.addChild(symbol)
 
       cb(null)
     }
@@ -50,7 +53,7 @@ module.exports = function (config) {
 
       this.push(new gutil.File({
         path: fileName
-      , contents: new Buffer(onlySvg ? svg.toString() : combinedDoc.toString())
+      , contents: new Buffer(inlineSvg ? svg.toString() : combinedDoc.toString())
       }))
 
       cb(null)
