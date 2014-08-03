@@ -4,7 +4,7 @@
   "description": "Combine svg files into one with <symbol> elements",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -25,8 +25,14 @@
     "through2": "^0.4.1"
   },
   "devDependencies": {
+    "chai": "^1.9.1",
+    "gm": "^1.16.0",
     "gulp": "^3.6.2",
-    "gulp-svgmin": "^0.4.5"
+    "gulp-connect": "^2.0.6",
+    "gulp-inject": "^1.0.1",
+    "gulp-mocha": "^0.5.2",
+    "tmp": "0.0.24",
+    "wd": "^0.3.4"
   },
   "keywords": [
     "gulp",
