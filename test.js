@@ -2,6 +2,7 @@
 
 var username = process.env.SAUCE_USERNAME || 'SAUCE_USERNAME'
 var accessKey = process.env.SAUCE_ACCESS_KEY || 'SAUCE_ACCESS_KEY'
+var tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER
 var port = process.env.PORT || 8888
 var wd = require('wd')
 var Q = wd.Q
@@ -45,7 +46,12 @@ describe('gulp-svgstore usage test', function() {
 
   before(function (done) {
     browser = wd.promiseChainRemote('ondemand.saucelabs.com', 80, username, accessKey)
-    browser.init({ browserName: 'chrome' }).nodeify(done)
+    browser
+      .init({
+        browserName: 'chrome'
+      , 'tunnel-identifier': tunnelIdentifier
+      })
+      .nodeify(done)
   })
 
   after(function (done) {
