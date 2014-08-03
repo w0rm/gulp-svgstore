@@ -6,6 +6,8 @@ gulp-svgstore
 Combine svg files into one with `<symbol>` elements.
 Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-good-choice-icons/).
 
+If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](https://github.com/FWeinb/grunt-svgstore).
+
 ## Caution:
 
 This is still incomplete and api may be changed anytime.
