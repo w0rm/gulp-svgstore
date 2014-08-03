@@ -1,7 +1,7 @@
 var libxml = require('libxmljs')
 var path = require('path')
 var through2 = require('through2')
-var gutil = require('gulp-util')
+var File = require('vinyl')
 
 module.exports = function (config) {
 
@@ -51,7 +51,7 @@ module.exports = function (config) {
         })
       }
 
-      this.push(new gutil.File({
+      this.push(new File({
         path: fileName
       , contents: new Buffer(inlineSvg ? svg.toString() : combinedDoc.toString())
       }))
