@@ -5,14 +5,14 @@ var accessKey = process.env.SAUCE_ACCESS_KEY || 'SAUCE_ACCESS_KEY'
 var tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER
 var port = process.env.PORT || 8888
 var wd = require('wd')
+var assert = require('assert')
 var Q = wd.Q
-var chai = require('chai')
 var fs = require('fs')
 var gm = require('gm')
 var tmp = require('tmp')
 
+
 tmp.setGracefulCleanup()
-chai.should()
 
 
 function writeScreenshot (data) {
@@ -81,7 +81,7 @@ describe('gulp-svgstore usage test', function() {
         return compareScreenshots(screenshot1, screenshot2)
       })
       .then(function (isEqual, equality, raw) { // jshint ignore:line
-        isEqual.should.be.true
+        assert.ok(isEqual, 'Screenshots are different')
       })
       .nodeify(done)
   })
