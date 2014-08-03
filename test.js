@@ -64,7 +64,7 @@ describe('gulp-svgstore usage test', function() {
       .get('http://localhost:' + port + '/inline-svg.html')
       .title()
       .then(function (title) {
-        title.should.equal('gulp-svgstore')
+        assert.equal(title, 'gulp-svgstore', 'Test page is not loaded')
       })
       .takeScreenshot()
       .then(writeScreenshot)
