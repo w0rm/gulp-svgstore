@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>gulp-svgstore</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      .svg {
+        width: 100px;
+        height: 100px;
+        fill: currentColor;
+      }
+      .svgstore {
+        display: none
+      }
+    </style>
+  </head>
+  <body>
+    <div class="svgstore"><!-- inject:svg --><!-- endinject --></div>
+    <svg class="svg">
+      <use xlink:href="#icon-circle">
+    </svg>
+  </body>
+</html>
