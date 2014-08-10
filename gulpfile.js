@@ -21,14 +21,22 @@ gulp.task('svg', function () {
 
 gulp.task('inline-svg', function () {
 
-  var svgs = gulp.src('test/src/*.svg')
-                 .pipe(svgstore({ prefix: 'icon-'
-                                , emptyFills: true
-                                , inlineSvg: true }))
+  var svgs
+
+  function transformSvg (svg, cb) {
+    cb(null, svg.attr({ style: 'display:none' }))
+  }
 
   function fileContents (filePath, file) {
     return file.contents.toString('utf8')
   }
+
+  svgs = gulp.src('test/src/*.svg')
+             .pipe(svgstore({ prefix: 'icon-'
+                            , emptyFills: true
+                            , inlineSvg: true
+                            , transformSvg: transformSvg
+                            }))
 
   return gulp
     .src('test/src/inline-svg.html')
