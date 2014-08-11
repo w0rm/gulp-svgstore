@@ -60,7 +60,7 @@ gulp.task('inline-svg', function () {
 
 
 
-gulp.task('test', ['svg'], function () {
+gulp.task('test', ['svg', 'inline-svg'], function () {
 
   var app = connect().use(serveStatic('test'))
   var server = http.createServer(app)
