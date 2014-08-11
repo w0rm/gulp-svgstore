@@ -18,36 +18,52 @@ If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](
 ## Usage
 
 The following script will combine circle.svg and square.svg into single svg file with
-`<symbol>` elements.
+`<symbol>` elements. Additionally pass through [gulp-svgmin](https://github.com/ben-eb/gulp-svgmin) to minimize svg payload size.
 
 ```
 var svgstore = require('gulp-svgstore')
 var gulp = require('gulp')
 var svgmin = require('gulp-svgmin')
 gulp.task('default', function () {
-  return gulp.src('test/fixtures/*.svg')
+  return gulp.src('test/src/*.svg')
              .pipe(svgmin())
-             .pipe(svgstore({ fileName: 'icons.svg'
-                            , prefix: 'icon-'
-                            }))
+             .pipe(svgstore({ fileName: 'icons.svg', prefix: 'icon-' }))
              .pipe(gulp.dest('test/'))
 })
 ```
 
-Combined svg:
+## Inlining svgstore result into html body
+
+To inline combined svg into html body I suggest using [gulp-inject](https://github.com/klei/gulp-inject).
+The following gulp task will inject svg into
+`<!-- inject:svg --><!-- endinject -->` placeholder of test/src/inline-svg.html.
+
 
 ```
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg">
-  <symbol id="icon-circle" viewBox="0 0 40 40">
-    <circle fill="#fff" stroke="#1D1D1B" stroke-miterlimit="10" cx="20" cy="20" r="10"/>
-  </symbol>
-  <symbol id="icon-square" viewBox="0 0 40 40">
-    <path stroke="#1D1D1B" stroke-miterlimit="10" d="M10 10h20v20h-20z"/>
-  </symbol>
-</svg>
+var svgstore = require('gulp-svgstore')
+var inject = require('gulp-inject')
+var gulp = require('gulp')
+gulp.task('default', function () {
+  var svgs = gulp.src('test/src/*.svg')
+                 .pipe(svgstore({ prefix: 'icon-', inlineSvg: true }))
+  function fileContents (filePath, file) {
+    return file.contents.toString('utf8')
+  }
+  return gulp
+    .src('test/src/inline-svg.html')
+    .pipe(inject(svgs, { transform: fileContents }))
+    .pipe(gulp.dest('test/dest'))
+})
+
 ```
+
+## Using svg as external file
+
+There is a problem with `<use xlink:href="external.svg#icon-name">` in Internet Explorer,
+so you should either inline everything into body with a
+[simple script like this](https://gist.github.com/w0rm/621a56a353f7b2a6b0db) or
+polyfil with [svg4everybody](https://github.com/jonathantneal/svg4everybody).
+
 
 ## Transform result svg
 
@@ -64,7 +80,7 @@ function transformSvg (svg, cb) {
 
 ### Remove fills
 
-To remove all fill attributes use the following transformSvg function:
+To remove all fill attributes (so you can set fill from css) use the following transformSvg function:
 
 ```
 function transformSvg (svg, cb) {
