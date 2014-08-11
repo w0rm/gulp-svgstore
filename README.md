@@ -15,12 +15,10 @@ I plan to add tests and then freeze api.
 
 ## Options:
 
-* fileName — the name of result file
-* prefix — prefix for ids of the <symbol> elements
-* inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline
-* emptyFills - remove all fill="none" so they can be changed in css
-* transformSvg(svg, cb) — should modify svg [libxmljs element](https://github.com/polotek/libxmljs/wiki/Element) and call `cb(err)` when done
-
+* fileName — the name of result file, default: 'svgstore.svg'
+* prefix — prefix for ids of the <symbol> elements, default: ''
+* inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: false
+* transformSvg(svg, cb) — callback to modify svg [libxmljs element](https://github.com/polotek/libxmljs/wiki/Element) and call `cb(err)` when done
 
 ## Usage
 
@@ -36,7 +34,6 @@ gulp.task('default', function () {
              .pipe(svgmin())
              .pipe(svgstore({ fileName: 'icons.svg'
                             , prefix: 'icon-'
-                            , inlineSvg: false
                             }))
              .pipe(gulp.dest('test/'))
 })
@@ -59,7 +56,6 @@ Combined svg:
 
 ## Transform result svg
 
-
 ### Add display:none
 
 To add `style="display:none"` use the following transformSvg function:
@@ -71,13 +67,24 @@ function transformSvg (svg, cb) {
 }
 ```
 
-### Remove all fills
+### Remove fills
 
 To remove all fill attributes use the following transformSvg function:
 
 ```
 function transformSvg (svg, cb) {
   svg.find('//*[@fill]').forEach(function (child) {
+    child.attr('fill').remove()
+  })
+  cb(null)
+}
+```
+
+Remove only particular fills (e.g. fill="none"):
+
+```
+function transformSvg (svg, cb) {
+  svg.find('//*[@fill="none"]').forEach(function (child) {
     child.attr('fill').remove()
   })
   cb(null)

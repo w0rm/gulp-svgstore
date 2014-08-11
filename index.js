@@ -8,9 +8,8 @@ module.exports = function (config) {
   config = config || {}
 
   var prefix = config.prefix || ''
-  var fileName = config.fileName || 'svg-defs.svg'
-  var inlineSvg = config.inlineSvg || config.onlySvg || false
-  var emptyFills = config.emptyFills || false
+  var fileName = config.fileName || 'svgstore.svg'
+  var inlineSvg = config.inlineSvg || false
   var transformSvg = config.transformSvg || false
 
   var combinedDoc = new libxml.Document()
@@ -45,12 +44,6 @@ module.exports = function (config) {
 
   , function flush (cb) {
       var self = this
-
-      if (emptyFills) {
-        combinedSvg.find('//*[@fill="none"]').forEach(function (child) {
-          child.attr('fill').remove()
-        })
-      }
 
       function done (err) {
         var file
