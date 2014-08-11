@@ -8,11 +8,6 @@ Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-go
 
 If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](https://github.com/FWeinb/grunt-svgstore).
 
-## Caution:
-
-This is still incomplete and api may be changed anytime.
-I plan to add tests and then freeze api.
-
 ## Options:
 
 * fileName — the name of result file, default: 'svgstore.svg'
