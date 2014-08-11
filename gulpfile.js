@@ -21,14 +21,23 @@ gulp.task('svg', function () {
 
 gulp.task('inline-svg', function () {
 
-  var svgs = gulp.src('test/src/*.svg')
-                 .pipe(svgstore({ prefix: 'icon-'
-                                , emptyFills: true
-                                , inlineSvg: true }))
+  var svgs
+
+  function transformSvg (svg, cb) {
+    svg.attr({ style: 'display:none' })
+    cb(null)
+  }
 
   function fileContents (filePath, file) {
     return file.contents.toString('utf8')
   }
+
+  svgs = gulp.src('test/src/*.svg')
+             .pipe(svgstore({ prefix: 'icon-'
+                            , emptyFills: true
+                            , inlineSvg: true
+                            , transformSvg: transformSvg
+                            }))
 
   return gulp
     .src('test/src/inline-svg.html')
@@ -39,7 +48,7 @@ gulp.task('inline-svg', function () {
 
 
 
-gulp.task('test', ['svg', 'inline-svg'], function () {
+gulp.task('test', ['svg'], function () {
 
   var app = connect().use(serveStatic('test'))
   var server = http.createServer(app)

@@ -11,15 +11,15 @@ module.exports = function (config) {
   var fileName = config.fileName || 'svg-defs.svg'
   var inlineSvg = config.inlineSvg || config.onlySvg || false
   var emptyFills = config.emptyFills || false
+  var transformSvg = config.transformSvg || false
 
   var combinedDoc = new libxml.Document()
-  var svg = combinedDoc.node('svg')
-  svg.attr({ xmlns: 'http://www.w3.org/2000/svg' })
-
+  var combinedSvg = combinedDoc.node('svg')
   combinedDoc.setDtd( 'svg'
                     , '-//W3C//DTD SVG 1.1//EN'
                     , 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'
                     )
+  combinedSvg.attr({ xmlns: 'http://www.w3.org/2000/svg' })
 
   return through2.obj(
 
@@ -38,25 +38,36 @@ module.exports = function (config) {
         symbol.addChild(child)
       })
 
-      svg.addChild(symbol)
+      combinedSvg.addChild(symbol)
 
       cb(null)
     }
 
   , function flush (cb) {
+      var self = this
 
       if (emptyFills) {
-        combinedDoc.find('//*[@fill="none"]').forEach(function (child) {
+        combinedSvg.find('//*[@fill="none"]').forEach(function (child) {
           child.attr('fill').remove()
         })
       }
 
-      this.push(new File({
-        path: fileName
-      , contents: new Buffer(inlineSvg ? svg.toString() : combinedDoc.toString())
-      }))
+      function done (err) {
+        var file
+        var contents
+        if (err) return cb(err)
+        contents = inlineSvg ? combinedSvg : combinedDoc
+        file = new File({ path: fileName, contents: new Buffer(contents) })
+        self.push(file)
+        cb(null)
+      }
 
-      cb(null)
+      if (transformSvg) {
+        transformSvg(combinedSvg, done)
+      } else {
+        done (null, combinedSvg)
+      }
+
     }
   )
 }
