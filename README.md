@@ -32,7 +32,7 @@ gulp.task('default', function () {
 })
 ```
 
-## Inlining svgstore result into html body
+### Inlining svgstore result into html body
 
 To inline combined svg into html body I suggest using [gulp-inject](https://github.com/klei/gulp-inject).
 The following gulp task will inject svg into
@@ -57,7 +57,7 @@ gulp.task('default', function () {
 
 ```
 
-## Using svg as external file
+### Using svg as external file
 
 There is a problem with `<use xlink:href="external.svg#icon-name">` in Internet Explorer,
 so you should either inline everything into body with a
