@@ -15,6 +15,10 @@ module.exports = function (config) {
 
   var combinedDoc = new libxml.Document()
   var combinedSvg = combinedDoc.node('svg')
+  combinedDoc.setDtd( 'svg'
+                    , '-//W3C//DTD SVG 1.1//EN'
+                    , 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'
+                    )
   combinedSvg.attr({ xmlns: 'http://www.w3.org/2000/svg' })
 
   return through2.obj(
@@ -48,9 +52,13 @@ module.exports = function (config) {
         })
       }
 
-      function done (err, svg) {
+      function done (err) {
+        var file
+        var contents
         if (err) return cb(err)
-        self.push(fileFromSvg(svg, fileName, inlineSvg))
+        contents = inlineSvg ? combinedSvg : combinedDoc
+        file = new File({ path: fileName, contents: new Buffer(contents) })
+        self.push(file)
         cb(null)
       }
 
@@ -62,21 +70,4 @@ module.exports = function (config) {
 
     }
   )
-}
-
-
-function fileFromSvg (svg, path, isInline) {
-  var doc, contents
-  if (isInline) {
-    contents = svg.toString()
-  } else {
-    doc = new libxml.Document()
-    doc.setDtd( 'svg'
-              , '-//W3C//DTD SVG 1.1//EN'
-              , 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'
-              )
-    doc.root(svg)
-    contents = doc.toString()
-  }
-  return new File({ path: path, contents: new Buffer(contents) })
 }

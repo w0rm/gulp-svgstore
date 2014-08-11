@@ -24,7 +24,8 @@ gulp.task('inline-svg', function () {
   var svgs
 
   function transformSvg (svg, cb) {
-    cb(null, svg.attr({ style: 'display:none' }))
+    svg.attr({ style: 'display:none' })
+    cb(null)
   }
 
   function fileContents (filePath, file) {
@@ -47,7 +48,7 @@ gulp.task('inline-svg', function () {
 
 
 
-gulp.task('test', ['svg', 'inline-svg'], function () {
+gulp.task('test', ['svg'], function () {
 
   var app = connect().use(serveStatic('test'))
   var server = http.createServer(app)

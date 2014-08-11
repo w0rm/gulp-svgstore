@@ -19,7 +19,7 @@ I plan to add tests and then freeze api.
 * prefix — prefix for ids of the <symbol> elements
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline
 * emptyFills - remove all fill="none" so they can be changed in css
-* transformSvg(svg, cb) — receives svg [libxmljs element](https://github.com/polotek/libxmljs/wiki/Element) and should call `cb(err, resultSvg)` when done
+* transformSvg(svg, cb) — should modify svg [libxmljs element](https://github.com/polotek/libxmljs/wiki/Element) and call `cb(err)` when done
 
 
 ## Usage
@@ -66,7 +66,8 @@ To add `style="display:none"` use the following transformSvg function:
 
 ```
 function transformSvg (svg, cb) {
-  cb(null, svg.attr({ style: 'display:none' }))
+  svg.attr({ style: 'display:none' })
+  cb(null)
 }
 ```
 
@@ -79,6 +80,6 @@ function transformSvg (svg, cb) {
   svg.find('//*[@fill]').forEach(function (child) {
     child.attr('fill').remove()
   })
-  cb(null, svg)
+  cb(null)
 }
 ```
