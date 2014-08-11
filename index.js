@@ -50,7 +50,7 @@ module.exports = function (config) {
         var contents
         if (err) return cb(err)
         contents = inlineSvg ? combinedSvg : combinedDoc
-        file = new File({ path: fileName, contents: new Buffer(contents) })
+        file = new File({ path: fileName, contents: new Buffer(contents.toString()) })
         self.push(file)
         cb(null)
       }
