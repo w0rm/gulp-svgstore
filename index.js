@@ -31,7 +31,8 @@ module.exports = function (config) {
       var xmlDoc = libxml.parseXml(file.contents.toString('utf8'))
       var contents = xmlDoc.root().childNodes()
       var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
-      var viewBoxAttr = xmlDoc.root().attr('viewBox').value()
+      var viewBoxAttr = xmlDoc.root().attr('viewBox')
+      if (viewBoxAttr) viewBoxAttr = viewBoxAttr.value()
       var symbol = libxml.Element(combinedDoc, 'symbol')
 
       symbol.attr({ id: idAttr, viewBox: viewBoxAttr })
