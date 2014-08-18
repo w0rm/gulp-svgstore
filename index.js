@@ -1,7 +1,7 @@
 var libxml = require('libxmljs')
 var path = require('path')
 var through2 = require('through2')
-var File = require('vinyl')
+var gutil = require('gulp-util')
 
 module.exports = function (config) {
 
@@ -23,6 +23,10 @@ module.exports = function (config) {
   return through2.obj(
 
     function transform (file, encoding, cb) {
+
+      if (file.isStream()) {
+        return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
+      }
 
       var xmlDoc = libxml.parseXml(file.contents.toString('utf8'))
       var contents = xmlDoc.root().childNodes()
@@ -50,7 +54,7 @@ module.exports = function (config) {
         var contents
         if (err) return cb(err)
         contents = inlineSvg ? combinedSvg : combinedDoc
-        file = new File({ path: fileName, contents: new Buffer(contents.toString()) })
+        file = new gutil.File({ path: fileName, contents: new Buffer(contents.toString()) })
         self.push(file)
         cb(null)
       }
