@@ -20,7 +20,7 @@ If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](
 The following script will combine circle.svg and square.svg into single svg file with
 `<symbol>` elements. Additionally pass through [gulp-svgmin](https://github.com/ben-eb/gulp-svgmin) to minimize svg payload size.
 
-```
+```js
 var svgstore = require('gulp-svgstore')
 var gulp = require('gulp')
 var svgmin = require('gulp-svgmin')
@@ -39,7 +39,7 @@ The following gulp task will inject svg into
 `<!-- inject:svg --><!-- endinject -->` placeholder of test/src/inline-svg.html.
 
 
-```
+```js
 var svgstore = require('gulp-svgstore')
 var inject = require('gulp-inject')
 var gulp = require('gulp')
@@ -71,7 +71,7 @@ polyfil with [svg4everybody](https://github.com/jonathantneal/svg4everybody).
 
 To add `style="display:none"` use the following transformSvg function:
 
-```
+```js
 function transformSvg (svg, cb) {
   svg.attr({ style: 'display:none' })
   cb(null)
@@ -82,7 +82,7 @@ function transformSvg (svg, cb) {
 
 To remove all fill attributes (so you can set fill from css) use the following transformSvg function:
 
-```
+```js
 function transformSvg (svg, cb) {
   svg.find('//*[@fill]').forEach(function (child) {
     child.attr('fill').remove()
@@ -93,7 +93,7 @@ function transformSvg (svg, cb) {
 
 Remove only particular fills (e.g. fill="none"):
 
-```
+```js
 function transformSvg (svg, cb) {
   svg.find('//*[@fill="none"]').forEach(function (child) {
     child.attr('fill').remove()
