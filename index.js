@@ -6,6 +6,7 @@ var gutil = require('gulp-util')
 module.exports = function (config) {
 
   config = config || {}
+  var isEmpty = true
 
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svgstore.svg'
@@ -26,6 +27,10 @@ module.exports = function (config) {
 
       if (file.isStream()) {
         return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
+      }
+
+      if (file && isEmpty) {
+        isEmpty = false
       }
 
       var xmlDoc = libxml.parseXml(file.contents.toString('utf8'))
@@ -59,6 +64,8 @@ module.exports = function (config) {
         self.push(file)
         cb(null)
       }
+
+      if (isEmpty) return
 
       if (transformSvg) {
         transformSvg(combinedSvg, done)
