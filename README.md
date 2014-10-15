@@ -106,3 +106,9 @@ function transformSvg (svg, cb) {
 
 * 2.0.0
   * Added check for inputs before generating SVG.
+
+* 1.0.1
+  * Added check for missing viewBox in original svg.
+
+* 1.0.0
+  * Initial release.

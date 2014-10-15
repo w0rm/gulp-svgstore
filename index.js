@@ -40,7 +40,8 @@ module.exports = function (config) {
       if (viewBoxAttr) viewBoxAttr = viewBoxAttr.value()
       var symbol = libxml.Element(combinedDoc, 'symbol')
 
-      symbol.attr({ id: idAttr, viewBox: viewBoxAttr })
+      symbol.attr({ id: idAttr })
+      if (viewBoxAttr) symbol.attr({ viewBox: viewBoxAttr })
 
       contents.forEach(function (child) {
         child.namespace(null)
