@@ -65,7 +65,7 @@ module.exports = function (config) {
         cb(null)
       }
 
-      if (isEmpty) return
+      if (isEmpty) return cb()
 
       if (transformSvg) {
         transformSvg(combinedSvg, done)
