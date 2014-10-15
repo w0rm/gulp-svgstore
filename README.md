@@ -101,3 +101,8 @@ function transformSvg (svg, cb) {
   cb(null)
 }
 ```
+
+## Changelog
+
+* 2.0.0
+  * Added check for inputs before generating SVG.
