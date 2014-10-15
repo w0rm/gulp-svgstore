@@ -54,6 +54,7 @@ module.exports = function (config) {
         var file
         var contents
         if (err) return cb(err)
+        if (!file) return
         contents = inlineSvg ? combinedSvg : combinedDoc
         file = new gutil.File({ path: fileName, contents: new Buffer(contents.toString()) })
         self.push(file)
