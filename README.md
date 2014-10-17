@@ -13,7 +13,8 @@ If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](
 * fileName — the name of result file, default: 'svgstore.svg'
 * prefix — prefix for ids of the <symbol> elements, default: ''
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: false
-* transformSvg(svg, cb) — callback to modify svg [libxmljs element](https://github.com/polotek/libxmljs/wiki/Element) and call `cb(err)` when done
+* transformSvg($svg, done) — transform combined svg with [cheerio](https://github.com/cheeriojs/cheerio)
+  and return result in callback `done(err, $svg)`
 
 ## Usage
 
@@ -72,9 +73,9 @@ polyfil with [svg4everybody](https://github.com/jonathantneal/svg4everybody).
 To add `style="display:none"` use the following transformSvg function:
 
 ```js
-function transformSvg (svg, cb) {
-  svg.attr({ style: 'display:none' })
-  cb(null)
+function transformSvg ($svg, done) {
+  $svg.attr('style', 'display:none')
+  done(null, $svg)
 }
 ```
 
@@ -83,22 +84,25 @@ function transformSvg (svg, cb) {
 To remove all fill attributes (so you can set fill from css) use the following transformSvg function:
 
 ```js
-function transformSvg (svg, cb) {
-  svg.find('[fill]').removeAttr('fill')
-  cb(null)
+function transformSvg ($svg, done) {
+  $svg.find('[fill]').removeAttr('fill')
+  done(null, $svg)
 }
 ```
 
 Remove only particular fills (e.g. fill="none"):
 
 ```js
-function transformSvg (svg, cb) {
-  svg.find('[fill="none"]').removeAttr('fill')
-  cb(null)
+function transformSvg ($svg, done) {
+  $svg.find('[fill="none"]').removeAttr('fill')
+  done(null, $svg)
 }
 ```
 
 ## Changelog
+
+* 3.0.0
+  * Used cheerio instead of libxmljs (changes transformSvg syntax)
 
 * 2.0.0
   * Added check for inputs before generating SVG.

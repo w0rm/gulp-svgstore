@@ -9,10 +9,10 @@ var inject = require('gulp-inject')
 
 gulp.task('svg', function () {
 
-  function transformSvg (svg, cb) {
+  function transformSvg ($svg, done) {
     // remove all fill="none" attributes
-    svg.find('[fill="none"]').removeAttr('fill')
-    cb(null)
+    $svg.find('[fill="none"]').removeAttr('fill')
+    done(null, $svg)
   }
 
   return gulp
@@ -30,11 +30,11 @@ gulp.task('inline-svg', function () {
 
   var svgs
 
-  function transformSvg (svg, cb) {
-    svg.attr({ style: 'display:none' })
+  function transformSvg ($svg, done) {
+    $svg.attr({ style: 'display:none' })
     // remove all fill="none" attributes
-    svg.find('[fill="none"]').removeAttr('fill')
-    cb(null)
+    $svg.find('[fill="none"]').removeAttr('fill')
+    done(null, $svg)
   }
 
   function fileContents (filePath, file) {

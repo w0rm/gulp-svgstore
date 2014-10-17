@@ -140,4 +140,27 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
+  it('should replace combined svg with transformed one', function (done) {
+
+    var stream = svgstore({ inlineSvg: true, transformSvg: transformSvg })
+
+    function transformSvg ($svg, cb) {
+      cb(null, '<svg id="transformed"/>')
+    }
+
+    stream.on('data', function (file) {
+      var result = file.contents.toString('utf8')
+      assert.equal( result, '<svg id="transformed"/>' )
+      done()
+    })
+
+    stream.write(new gutil.File({
+      contents: new Buffer('<svg viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></svg>')
+    , path: 'circle.svg'
+    }))
+
+    stream.end()
+
+  })
+
 })

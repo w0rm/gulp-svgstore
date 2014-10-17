@@ -13,13 +13,13 @@ module.exports = function (config) {
   var inlineSvg = config.inlineSvg || false
   var transformSvg = config.transformSvg || false
 
-  var combinedDoc = cheerio.load(
+  var $ = cheerio.load(
     '<?xml version="1.0" encoding="UTF-8"?>' +
     '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
     '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' +
     '<svg xmlns="http://www.w3.org/2000/svg" />', { xmlMode: true }
   )
-  var combinedSvg = combinedDoc('svg')
+  var $combinedSvg = $('svg')
 
   return through2.obj(
 
@@ -29,34 +29,37 @@ module.exports = function (config) {
         return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
       }
 
-      var xmlDoc = cheerio.load(file.contents.toString('utf8'), {xmlMode: true})
+      var $svg = cheerio.load(file.contents.toString('utf8'), {xmlMode: true})('svg')
       var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
-      var viewBoxAttr = xmlDoc('svg').attr('viewBox')
-      var symbol = cheerio('<symbol/>')
+      var viewBoxAttr = $svg.attr('viewBox')
+      var $symbol = $('<symbol/>')
 
       if (file && isEmpty) {
         isEmpty = false
       }
 
-      symbol.attr({ id: idAttr })
+      $symbol.attr('id', idAttr)
       if (viewBoxAttr) {
-        symbol.attr({ viewBox: viewBoxAttr })
+        $symbol.attr('viewBox', viewBoxAttr)
       }
 
-      symbol.html(xmlDoc('svg').html())
-      combinedSvg.append(symbol)
+      $symbol.append($svg.contents())
+      $combinedSvg.append($symbol)
       cb()
     }
 
   , function flush (cb) {
       var self = this
 
-      function done (err) {
+      function done (err, $svg) {
         var file
         var contents
         if (err) return cb(err)
-        contents = inlineSvg ? combinedSvg : combinedDoc
-        file = new gutil.File({ path: fileName, contents: new Buffer(contents.html()) })
+        if ($svg) {
+          $combinedSvg.replaceWith($svg)
+        }
+        contents = inlineSvg ? $.xml('svg') : $.xml()
+        file = new gutil.File({ path: fileName, contents: new Buffer(contents) })
         self.push(file)
         cb()
       }
@@ -64,9 +67,9 @@ module.exports = function (config) {
       if (isEmpty) return cb()
 
       if (transformSvg) {
-        transformSvg(combinedSvg, done)
+        transformSvg($combinedSvg, done)
       } else {
-        done (null, combinedSvg)
+        done()
       }
 
     }
