@@ -7,6 +7,7 @@ module.exports = function (config) {
 
   config = config || {}
 
+  var isEmpty = true
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svgstore.svg'
   var inlineSvg = config.inlineSvg || false
@@ -33,6 +34,10 @@ module.exports = function (config) {
       var viewBoxAttr = xmlDoc('svg').attr('viewBox')
       var symbol = cheerio('<symbol/>')
 
+      if (file && isEmpty) {
+        isEmpty = false
+      }
+
       symbol.attr({ id: idAttr })
       if (viewBoxAttr) {
         symbol.attr({ viewBox: viewBoxAttr })
@@ -40,7 +45,7 @@ module.exports = function (config) {
 
       symbol.html(xmlDoc('svg').html())
       combinedSvg.append(symbol)
-      cb(null)
+      cb()
     }
 
   , function flush (cb) {
@@ -53,8 +58,10 @@ module.exports = function (config) {
         contents = inlineSvg ? combinedSvg : combinedDoc
         file = new gutil.File({ path: fileName, contents: new Buffer(contents.html()) })
         self.push(file)
-        cb(null)
+        cb()
       }
+
+      if (isEmpty) return cb()
 
       if (transformSvg) {
         transformSvg(combinedSvg, done)
