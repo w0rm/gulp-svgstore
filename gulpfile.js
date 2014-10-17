@@ -31,7 +31,7 @@ gulp.task('inline-svg', function () {
   var svgs
 
   function transformSvg ($svg, done) {
-    $svg.attr({ style: 'display:none' })
+    $svg.attr('style', 'display:none')
     // remove all fill="none" attributes
     $svg.find('[fill="none"]').removeAttr('fill')
     done(null, $svg)
