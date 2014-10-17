@@ -84,9 +84,7 @@ To remove all fill attributes (so you can set fill from css) use the following t
 
 ```js
 function transformSvg (svg, cb) {
-  svg.find('//*[@fill]').forEach(function (child) {
-    child.attr('fill').remove()
-  })
+  svg.find('[fill]').removeAttr('fill')
   cb(null)
 }
 ```
@@ -95,9 +93,7 @@ Remove only particular fills (e.g. fill="none"):
 
 ```js
 function transformSvg (svg, cb) {
-  svg.find('//*[@fill="none"]').forEach(function (child) {
-    child.attr('fill').remove()
-  })
+  svg.find('[fill="none"]').removeAttr('fill')
   cb(null)
 }
 ```

@@ -11,9 +11,7 @@ gulp.task('svg', function () {
 
   function transformSvg (svg, cb) {
     // remove all fill="none" attributes
-    svg.find('//*[@fill="none"]').forEach(function (child) {
-      child.attr('fill').remove()
-    })
+    svg.find('[fill="none"]').removeAttr('fill')
     cb(null)
   }
 
@@ -35,9 +33,7 @@ gulp.task('inline-svg', function () {
   function transformSvg (svg, cb) {
     svg.attr({ style: 'display:none' })
     // remove all fill="none" attributes
-    svg.find('//*[@fill="none"]').forEach(function (child) {
-      child.attr('fill').remove()
-    })
+    svg.find('[fill="none"]').removeAttr('fill')
     cb(null)
   }
 

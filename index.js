@@ -1,4 +1,4 @@
-var libxml = require('libxmljs')
+var cheerio = require('cheerio')
 var path = require('path')
 var through2 = require('through2')
 var gutil = require('gulp-util')
@@ -12,13 +12,13 @@ module.exports = function (config) {
   var inlineSvg = config.inlineSvg || false
   var transformSvg = config.transformSvg || false
 
-  var combinedDoc = new libxml.Document()
-  var combinedSvg = combinedDoc.node('svg')
-  combinedDoc.setDtd( 'svg'
-                    , '-//W3C//DTD SVG 1.1//EN'
-                    , 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'
-                    )
-  combinedSvg.attr({ xmlns: 'http://www.w3.org/2000/svg' })
+  var combinedDoc = cheerio.load(
+    '<?xml version="1.0" encoding="UTF-8"?>' +
+    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
+    '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" />', { xmlMode: true }
+  )
+  var combinedSvg = combinedDoc('svg')
 
   return through2.obj(
 
@@ -28,22 +28,18 @@ module.exports = function (config) {
         return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
       }
 
-      var xmlDoc = libxml.parseXml(file.contents.toString('utf8'))
-      var contents = xmlDoc.root().childNodes()
+      var xmlDoc = cheerio.load(file.contents.toString('utf8'), {xmlMode: true})
       var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
-      var viewBoxAttr = xmlDoc.root().attr('viewBox')
-      if (viewBoxAttr) viewBoxAttr = viewBoxAttr.value()
-      var symbol = libxml.Element(combinedDoc, 'symbol')
+      var viewBoxAttr = xmlDoc('svg').attr('viewBox')
+      var symbol = cheerio('<symbol/>')
 
-      symbol.attr({ id: idAttr, viewBox: viewBoxAttr })
+      symbol.attr({ id: idAttr })
+      if (viewBoxAttr) {
+        symbol.attr({ viewBox: viewBoxAttr })
+      }
 
-      contents.forEach(function (child) {
-        child.namespace(null)
-        symbol.addChild(child)
-      })
-
-      combinedSvg.addChild(symbol)
-
+      symbol.html(xmlDoc('svg').html())
+      combinedSvg.append(symbol)
       cb(null)
     }
 
@@ -55,7 +51,7 @@ module.exports = function (config) {
         var contents
         if (err) return cb(err)
         contents = inlineSvg ? combinedSvg : combinedDoc
-        file = new gutil.File({ path: fileName, contents: new Buffer(contents.toString()) })
+        file = new gutil.File({ path: fileName, contents: new Buffer(contents.html()) })
         self.push(file)
         cb(null)
       }
