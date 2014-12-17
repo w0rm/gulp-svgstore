@@ -68,6 +68,22 @@ polyfil with [svg4everybody](https://github.com/jonathantneal/svg4everybody).
 
 ## Transform result svg
 
+The `transformSvg` function can be used inside the svgstore options parameter object like this:
+
+```js
+var svgs = gulp.src(['app/resources/*.svg', '!app/resources/lines.svg'])
+    .pipe(svgmin())
+    .pipe(svgstore({
+        inlineSvg: true,
+        transformSvg: function ($svg, done) {
+          $svg.attr('style', 'display:none')
+          done(null, $svg)
+        }
+      }
+    )
+);
+```
+
 ### Add display:none
 
 To add `style="display:none"` use the following transformSvg function:
