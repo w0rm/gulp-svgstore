@@ -75,11 +75,13 @@ var svgs = gulp.src(['app/resources/*.svg', '!app/resources/lines.svg'])
     .pipe(svgmin())
     .pipe(svgstore({
         inlineSvg: true,
-        transformSvg: function (svg, cb) {
-            svg.attr({ style: 'display:none' });
-            cb(null);
+        transformSvg: function ($svg, done) {
+          $svg.attr('style', 'display:none')
+          done(null, $svg)
         }
-}));
+      }
+    )
+);
 ```
 
 ### Add display:none
