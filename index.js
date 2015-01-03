@@ -11,14 +11,17 @@ module.exports = function (config) {
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svgstore.svg'
   var inlineSvg = config.inlineSvg || false
-  var transformSvg = config.transformSvg || false
 
-  var $ = cheerio.load(
-    '<?xml version="1.0" encoding="UTF-8"?>' +
-    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
-    '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' +
-    '<svg xmlns="http://www.w3.org/2000/svg" />', { xmlMode: true }
-  )
+  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" />'
+  if (!inlineSvg) {
+    resultSvg =
+      '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
+      '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' +
+      resultSvg
+  }
+
+  var $ = cheerio.load(resultSvg, { xmlMode: true })
   var $combinedSvg = $('svg')
 
   return through2.obj(
@@ -29,7 +32,11 @@ module.exports = function (config) {
         return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
       }
 
-      var $svg = cheerio.load(file.contents.toString('utf8'), {xmlMode: true})('svg')
+      if (!file.cheerio) {
+        file.cheerio = cheerio.load(file.contents.toString(), { xmlMode: true })
+      }
+
+      var $svg = file.cheerio('svg')
       var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
       var viewBoxAttr = $svg.attr('viewBox')
       var $symbol = $('<symbol/>')
@@ -49,29 +56,11 @@ module.exports = function (config) {
     }
 
   , function flush (cb) {
-      var self = this
-
-      function done (err, $svg) {
-        var file
-        var contents
-        if (err) return cb(err)
-        if ($svg) {
-          $combinedSvg.replaceWith($svg)
-        }
-        contents = inlineSvg ? $.xml('svg') : $.xml()
-        file = new gutil.File({ path: fileName, contents: new Buffer(contents) })
-        self.push(file)
-        cb()
-      }
-
       if (isEmpty) return cb()
-
-      if (transformSvg) {
-        transformSvg($combinedSvg, done)
-      } else {
-        done()
-      }
-
+      var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
+      file.cheerio = $
+      this.push(file)
+      cb()
     }
   )
 }

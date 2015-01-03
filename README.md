@@ -13,8 +13,6 @@ If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](
 * fileName — the name of result file, default: 'svgstore.svg'
 * prefix — prefix for ids of the <symbol> elements, default: ''
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: false
-* transformSvg($svg, done) — transform combined svg with [cheerio](https://github.com/cheeriojs/cheerio)
-  and return result in callback `done(err, $svg)`
 
 ## Usage
 
@@ -66,56 +64,54 @@ so you should either inline everything into body with a
 polyfil with [svg4everybody](https://github.com/jonathantneal/svg4everybody).
 
 
-## Transform result svg
+## Transform source or result svg
 
-The `transformSvg` function can be used inside the svgstore options parameter object like this:
+To transform either source or result svg you may pipe your files through
+[gulp-cheerio](https://github.com/KenPowers/gulp-cheerio).
+
+### Transforming svg sources
+
+An example below removes all fill attributes from svg sources before combining them.
+Please note that you have to set `xmlMode: true` for svg file to be parsed as xml file.
 
 ```js
-var svgs = gulp.src(['app/resources/*.svg', '!app/resources/lines.svg'])
+gulp.src('test/src/*.svg')
+    .pipe(cheerio({
+        run: function ($) {
+            $('[fill]').removeAttr('fill');
+        },
+        parserOptions: {
+            xmlMode: true
+        }
+    })
+    .pipe(svgstore({
+        inlineSvg: true
+    });
+}));
+```
+
+### Transforming result svg
+
+The following example sets `style="display:none"` on the combined svg:
+
+```js
+gulp.src('test/src/*.svg')
     .pipe(svgmin())
     .pipe(svgstore({
-        inlineSvg: true,
-        transformSvg: function ($svg, done) {
-          $svg.attr('style', 'display:none')
-          done(null, $svg)
-        }
-      }
-    )
+        inlineSvg: true
+    })
+    .pipe(cheerio(function ($) {
+        $('svg').attr('style', 'display:none');
+    }))
 );
 ```
 
-### Add display:none
-
-To add `style="display:none"` use the following transformSvg function:
-
-```js
-function transformSvg ($svg, done) {
-  $svg.attr('style', 'display:none')
-  done(null, $svg)
-}
-```
-
-### Remove fills
-
-To remove all fill attributes (so you can set fill from css) use the following transformSvg function:
-
-```js
-function transformSvg ($svg, done) {
-  $svg.find('[fill]').removeAttr('fill')
-  done(null, $svg)
-}
-```
-
-Remove only particular fills (e.g. fill="none"):
-
-```js
-function transformSvg ($svg, done) {
-  $svg.find('[fill="none"]').removeAttr('fill')
-  done(null, $svg)
-}
-```
-
 ## Changelog
+
+* 4.0.0
+  * Removed transformSvg, pipe your files through [gulp-cheerio](https://github.com/KenPowers/gulp-cheerio) instead.
+  * Made cheerio 0.* a peer dependency, allows to choose what version to use.
+  * Uses `file.cheerio` if cached in gulp file object and also sets it for the combined svg.
 
 * 3.0.0
   * Used cheerio instead of libxmljs (changes transformSvg syntax)
