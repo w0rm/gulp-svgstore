@@ -117,7 +117,8 @@ gulp.task('svgstore', function () {
         .pipe(svgstore({ inlineSvg: true }))
         .pipe(cheerio(function ($) {
             $('svg').attr('style', 'display:none');
-        }));
+        }))
+        .pipe(gulp.dest('test/dest'));
 });
 ```
 
@@ -152,7 +153,8 @@ gulp.task('metadata', function () {
             this.push(jsonFile);
             this.push(file);
             cb();
-        }));
+        }))
+        .pipe(gulp.dest('test/dest'));
 });
 ```
 
