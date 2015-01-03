@@ -12,7 +12,7 @@ var gm = require('gm')
 var tmp = require('tmp')
 var svgstore = require('./index')
 var gutil = require('gulp-util')
-
+var cheerio = require('cheerio')
 
 tmp.setGracefulCleanup()
 
@@ -116,7 +116,7 @@ describe('gulp-svgstore unit test', function () {
     var stream = svgstore({ inlineSvg: true })
 
     stream.on('data', function (file) {
-      var result = file.contents.toString('utf8')
+      var result = file.contents.toString()
       var target =
       '<svg xmlns="http://www.w3.org/2000/svg">' +
       '<symbol id="circle" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></symbol>' +
@@ -140,17 +140,38 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
-  it('should replace combined svg with transformed one', function (done) {
+  it('should use cached cheerio object instead of file contents', function (done) {
 
-    var stream = svgstore({ inlineSvg: true, transformSvg: transformSvg })
+    var stream = svgstore({ inlineSvg: true })
+    var file = new gutil.File({
+      contents: new Buffer('<svg><rect x="1" y="1" width="2" height="2"/></svg>')
+    , path: 'square.svg'
+    })
 
-    function transformSvg ($svg, cb) {
-      cb(null, '<svg id="transformed"/>')
-    }
+    file.cheerio = cheerio.load('<svg><circle cx="2" cy="2" r="1"/></svg>', { xmlMode: true })
 
     stream.on('data', function (file) {
-      var result = file.contents.toString('utf8')
-      assert.equal( result, '<svg id="transformed"/>' )
+      var result = file.contents.toString()
+      var target =
+      '<svg xmlns="http://www.w3.org/2000/svg">' +
+      '<symbol id="square"><circle cx="2" cy="2" r="1"/></symbol>' +
+      '</svg>'
+      assert.equal( result, target )
+      done()
+    })
+
+    stream.write(file)
+    stream.end()
+
+  })
+
+  it('should cache cheerio object for the result file', function (done) {
+
+    var stream = svgstore()
+
+    stream.on('data', function (file) {
+      assert.ok(file.cheerio)
+      assert.equal( file.contents.toString(), file.cheerio.xml() )
       done()
     })
 

@@ -1,6 +1,7 @@
 var svgstore = require('./index')
 var gulp = require('gulp')
 var mocha = require('gulp-mocha')
+var cheerio = require('gulp-cheerio')
 var connect = require('connect')
 var serveStatic = require('serve-static')
 var http = require('http')
@@ -9,18 +10,15 @@ var inject = require('gulp-inject')
 
 gulp.task('svg', function () {
 
-  function transformSvg ($svg, done) {
-    // remove all fill="none" attributes
-    $svg.find('[fill="none"]').removeAttr('fill')
-    done(null, $svg)
-  }
-
   return gulp
     .src('test/src/*.svg')
-    .pipe(svgstore({ fileName: 'icons.svg'
-                   , prefix: 'icon-'
-                   , transformSvg: transformSvg
-                   }))
+    .pipe(cheerio({
+      run: function ($) {
+        $('[fill="none"]').removeAttr('fill')
+      },
+      parserOptions: { xmlMode: true }
+    }))
+    .pipe(svgstore({ fileName: 'icons.svg', prefix: 'icon-' }))
     .pipe(gulp.dest('test/dest'))
 
 })
@@ -28,24 +26,22 @@ gulp.task('svg', function () {
 
 gulp.task('inline-svg', function () {
 
-  var svgs
-
-  function transformSvg ($svg, done) {
-    $svg.attr('style', 'display:none')
-    // remove all fill="none" attributes
-    $svg.find('[fill="none"]').removeAttr('fill')
-    done(null, $svg)
-  }
-
   function fileContents (filePath, file) {
     return file.contents.toString('utf8')
   }
 
-  svgs = gulp.src('test/src/*.svg')
-             .pipe(svgstore({ prefix: 'icon-'
-                            , inlineSvg: true
-                            , transformSvg: transformSvg
-                            }))
+  var svgs = gulp
+    .src('test/src/*.svg')
+    .pipe(cheerio({
+      run: function ($) {
+        $('[fill="none"]').removeAttr('fill')
+      },
+      parserOptions: { xmlMode: true }
+    }))
+    .pipe(svgstore({ prefix: 'icon-', inlineSvg: true }))
+    .pipe(cheerio(function ($) {
+      $('svg').attr('style', 'display:none')
+    }))
 
   return gulp
     .src('test/src/inline-svg.html')
