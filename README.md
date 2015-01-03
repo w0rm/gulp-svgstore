@@ -99,7 +99,6 @@ gulp.task('svgstore', function () {
         })
         .pipe(svgstore({ inlineSvg: true })
         .pipe(gulp.dest('test/dest'));
-    }));
 });
 ```
 
