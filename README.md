@@ -160,6 +160,9 @@ gulp.task('metadata', function () {
 
 ## Changelog
 
+* 4.0.1
+  * Added cheerio to devDependencies
+
 * 4.0.0
   * Removed `transformSvg`, pipe files through [gulp-cheerio](https://github.com/KenPowers/gulp-cheerio) instead.
   * Made cheerio 0.* a peer dependency, allows to choose what version to use.
