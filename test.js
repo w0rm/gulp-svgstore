@@ -184,4 +184,23 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
+  it('should emit error if files have the same name', function (done) {
+
+      var stream = svgstore()
+
+      stream.on('error', function (error) {
+        assert.ok(error instanceof gutil.PluginError);
+        assert.equal(error.message, 'File name should be unique: circle')
+        done()
+      })
+
+      stream.write(new gutil.File({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
+      stream.write(new gutil.File({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
+
+      stream.end()
+
+  })
+
+
+
 })
