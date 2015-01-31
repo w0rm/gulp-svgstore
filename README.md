@@ -187,7 +187,7 @@ gulp.task('metadata', function () {
 
 ## Changelog
 
-* 4.0.2
+* 4.0.3
   * Ensure unique file names
   * Improved readme with gulp-rename usage to generate id for nested directories
 
