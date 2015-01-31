@@ -160,6 +160,10 @@ gulp.task('metadata', function () {
 
 ## Changelog
 
+* 4.0.2
+  * Ensure unique file names
+  * Improved readme with gulp-rename usage to generate id for nested directories
+
 * 4.0.1
   * Added cheerio to devDependencies
 
