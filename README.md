@@ -11,7 +11,7 @@ If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](
 ## Options:
 
 * fileName — the name of result file, default: 'svgstore.svg'
-* prefix — prefix for ids of the <symbol> elements, default: ''
+* prefix *(deprecated, please use gulp-rename)* — prefix for ids of the <symbol> elements, default: ''
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: false
 
 ## Usage
@@ -58,6 +58,33 @@ gulp.task('svgstore', function () {
         .src('test/src/inline-svg.html')
         .pipe(inject(svgs, { transform: fileContents }))
         .pipe(gulp.dest('test/dest'));
+});
+```
+
+### Generating complex id attributes
+
+Id of symbol element is calculated from file name. You cannot pass files with the same name,
+because id should be unique. If you need to have nested directories that may have files with
+the same name, please use `gulp-rename`.
+
+The following example will concatenate relative path with the name of the file,
+e.g. `src/svg/one/two/three/circle.svg` becomes `one-two-three-circle`.
+
+
+```js
+var gulp = require('gulp');
+var rename = require('gulp-rename');
+var svgstore = require('gulp-svgstore');
+
+gulp.task('default', function () {
+  return gulp.src('src/svg/**/*.svg', { base: 'src/svg' })
+    .pipe(rename(function (path) {
+      var name = path.dirname.split('/');
+      name.push(path.basename);
+      path.basename = name.join('-');
+    }))
+    .pipe(svgstore())
+    .pipe(gulp.dest('dest'));
 });
 ```
 

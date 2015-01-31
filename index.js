@@ -11,6 +11,7 @@ module.exports = function (config) {
   var prefix = config.prefix || ''
   var fileName = config.fileName || 'svgstore.svg'
   var inlineSvg = config.inlineSvg || false
+  var ids = {}
 
   var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" />'
   if (!inlineSvg) {
@@ -40,6 +41,12 @@ module.exports = function (config) {
       var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
       var viewBoxAttr = $svg.attr('viewBox')
       var $symbol = $('<symbol/>')
+
+      if (idAttr in ids) {
+        return cb(new gutil.PluginError('gulp-svgstore', 'File name should be unique: ' + idAttr))
+      }
+
+      ids[idAttr] = true
 
       if (file && isEmpty) {
         isEmpty = false
