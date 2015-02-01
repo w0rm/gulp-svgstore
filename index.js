@@ -8,8 +8,7 @@ module.exports = function (config) {
   config = config || {}
 
   var isEmpty = true
-  var prefix = config.prefix || ''
-  var fileName = config.fileName || 'svgstore.svg'
+  var fileName
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
@@ -38,7 +37,7 @@ module.exports = function (config) {
       }
 
       var $svg = file.cheerio('svg')
-      var idAttr = prefix + path.basename(file.relative, path.extname(file.relative))
+      var idAttr = path.basename(file.relative, path.extname(file.relative))
       var viewBoxAttr = $svg.attr('viewBox')
       var $symbol = $('<symbol/>')
 
@@ -47,6 +46,15 @@ module.exports = function (config) {
       }
 
       ids[idAttr] = true
+
+      if (!fileName) {
+        fileName = path.basename(file.base)
+        if (fileName === '.' || !fileName) {
+          fileName = 'svgstore.svg'
+        } else {
+          fileName = fileName.split(path.sep).shift() + '.svg'
+        }
+      }
 
       if (file && isEmpty) {
         isEmpty = false

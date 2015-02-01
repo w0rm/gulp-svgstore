@@ -18,7 +18,7 @@ gulp.task('svg', function () {
       },
       parserOptions: { xmlMode: true }
     }))
-    .pipe(svgstore({ fileName: 'icons.svg', prefix: 'icon-' }))
+    .pipe(svgstore())
     .pipe(gulp.dest('test/dest'))
 
 })
@@ -38,7 +38,7 @@ gulp.task('inline-svg', function () {
       },
       parserOptions: { xmlMode: true }
     }))
-    .pipe(svgstore({ prefix: 'icon-', inlineSvg: true }))
+    .pipe(svgstore({ inlineSvg: true }))
     .pipe(cheerio(function ($) {
       $('svg').attr('style', 'display:none')
     }))

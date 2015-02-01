@@ -10,14 +10,23 @@ If you need similar plugin for grunt, I encourage you to check [grunt-svgstore](
 
 ## Options:
 
-* fileName — the name of result file, default: 'svgstore.svg'
-* prefix *(deprecated, please use gulp-rename)* — prefix for ids of the <symbol> elements, default: ''
-* inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: false
+The following options are set automatically based on file data:
+
+* `id` attribute of the `<symbol>` element is set to the name of corresponding file;
+* result filename is the name of base directory of the first file.
+
+If your workflow is different, please use `gulp-rename` to rename sources or result.
+
+The only available option is:
+
+* inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: `false`.
 
 ## Usage
 
-The following script will combine circle.svg and square.svg into single svg file with
-`<symbol>` elements. Additionally pass through [gulp-svgmin](https://github.com/ben-eb/gulp-svgmin)
+The following script will combine all svg sources into single svg file with `<symbol>` elements.
+The name of result svg is the base directory name of the first file `src.svg`.
+
+Additionally pass through [gulp-svgmin](https://github.com/ben-eb/gulp-svgmin)
 to minimize svg payload size.
 
 ```js
@@ -29,7 +38,7 @@ gulp.task('svgstore', function () {
     return gulp
         .src('test/src/*.svg')
         .pipe(svgmin())
-        .pipe(svgstore({ fileName: 'icons.svg', prefix: 'icon-' }))
+        .pipe(svgstore())
         .pipe(gulp.dest('test/dest'));
 });
 ```
@@ -48,7 +57,7 @@ var inject = require('gulp-inject');
 gulp.task('svgstore', function () {
     var svgs = gulp
         .src('test/src/*.svg')
-        .pipe(svgstore({ prefix: 'icon-', inlineSvg: true }));
+        .pipe(svgstore({ inlineSvg: true }));
 
     function fileContents (filePath, file) {
         return file.contents.toString();
@@ -61,13 +70,29 @@ gulp.task('svgstore', function () {
 });
 ```
 
-### Generating complex id attributes
+### Generating id attributes
 
 Id of symbol element is calculated from file name. You cannot pass files with the same name,
-because id should be unique. If you need to have nested directories that may have files with
-the same name, please use `gulp-rename`.
+because id should be unique.
 
-The following example will concatenate relative path with the name of the file,
+If you need to add prefix to each id, please use `gulp-rename`:
+
+```js
+var gulp = require('gulp');
+var rename = require('gulp-rename');
+var svgstore = require('gulp-svgstore');
+
+gulp.task('default', function () {
+    return gulp
+        .src('src/svg/**/*.svg', { base: 'src/svg' })
+        .pipe(rename({prefix: 'icon-'})
+        .pipe(svgstore())
+        .pipe(gulp.dest('dest'));
+});
+```
+
+If you need to have nested directories that may have files with the same name, please
+use `gulp-rename`. The following example will concatenate relative path with the name of the file,
 e.g. `src/svg/one/two/three/circle.svg` becomes `one-two-three-circle`.
 
 
@@ -77,14 +102,15 @@ var rename = require('gulp-rename');
 var svgstore = require('gulp-svgstore');
 
 gulp.task('default', function () {
-  return gulp.src('src/svg/**/*.svg', { base: 'src/svg' })
-    .pipe(rename(function (path) {
-      var name = path.dirname.split('/');
-      name.push(path.basename);
-      path.basename = name.join('-');
-    }))
-    .pipe(svgstore())
-    .pipe(gulp.dest('dest'));
+    return gulp
+        .src('src/svg/**/*.svg', { base: 'src/svg' })
+        .pipe(rename(function (path) {
+            var name = path.dirname.split(path.sep);
+            name.push(path.basename);
+            path.basename = name.join('-');
+        }))
+        .pipe(svgstore())
+        .pipe(gulp.dest('dest'));
 });
 ```
 
