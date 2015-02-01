@@ -201,6 +201,54 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
+  it('should generate result filename based on base path of the first file', function (done) {
 
+      var stream = svgstore()
+
+      stream.on('data', function (file) {
+        assert.equal(file.relative, 'icons.svg')
+        done()
+      })
+
+      stream.write(new gutil.File({
+        contents: new Buffer('<svg/>')
+      , path: 'src/icons/circle.svg'
+      , base: 'src/icons'
+      }))
+
+      stream.write(new gutil.File({
+        contents: new Buffer('<svg/>')
+      , path: 'src2/icons2/square.svg'
+      , base: 'src2/icons2'
+      }))
+
+      stream.end()
+
+  })
+
+  it('should generate svgstore.svg if base path of the 1st file is dot', function (done) {
+
+      var stream = svgstore()
+
+      stream.on('data', function (file) {
+        assert.equal(file.relative, 'svgstore.svg')
+        done()
+      })
+
+      stream.write(new gutil.File({
+        contents: new Buffer('<svg/>')
+      , path: 'circle.svg'
+      , base: '.'
+      }))
+
+      stream.write(new gutil.File({
+        contents: new Buffer('<svg/>')
+      , path: 'src2/icons2/square.svg'
+      , base: 'src2'
+      }))
+
+      stream.end()
+
+  })
 
 })
