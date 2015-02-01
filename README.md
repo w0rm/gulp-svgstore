@@ -213,6 +213,9 @@ gulp.task('metadata', function () {
 
 ## Changelog
 
+* 5.0.0
+  * Removed prefix and fileName options
+
 * 4.0.3
   * Ensure unique file names
   * Improved readme with gulp-rename usage to generate id for nested directories
