@@ -85,7 +85,7 @@ var svgstore = require('gulp-svgstore');
 gulp.task('default', function () {
     return gulp
         .src('src/svg/**/*.svg', { base: 'src/svg' })
-        .pipe(rename({prefix: 'icon-'})
+        .pipe(rename({prefix: 'icon-'}))
         .pipe(svgstore())
         .pipe(gulp.dest('dest'));
 });
@@ -149,7 +149,7 @@ gulp.task('svgstore', function () {
                 $('[fill]').removeAttr('fill');
             },
             parserOptions: { xmlMode: true }
-        })
+        }))
         .pipe(svgstore({ inlineSvg: true })
         .pipe(gulp.dest('test/dest'));
 });
