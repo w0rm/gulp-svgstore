@@ -158,6 +158,7 @@ gulp.task('svgstore', function () {
 ### Transform combined svg
 
 The following example sets `style="display:none"` on the combined svg:
+(beware if you use gradients and masks as defs this method wont work)
 
 ```js
 var gulp = require('gulp');
