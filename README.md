@@ -47,7 +47,15 @@ gulp.task('svgstore', function () {
 
 To inline combined svg into html body I suggest using [gulp-inject](https://github.com/klei/gulp-inject).
 The following gulp task will inject svg into
-`<!-- inject:svg --><!-- endinject -->` placeholder of test/src/inline-svg.html.
+
+In your html file:
+
+```html
+<div style="height: 0; width: 0; position: absolute; visibility: hidden">
+  <!-- inject:svg --><!-- endinject -->
+</div>
+``` 
+In your gulp tasks:
 
 ```js
 var gulp = require('gulp');
@@ -158,7 +166,9 @@ gulp.task('svgstore', function () {
 ### Transform combined svg
 
 The following example sets `style="display:none"` on the combined svg:
-(beware if you use gradients and masks as defs this method wont work)
+(beware if you use gradients and masks, display:none breaks those and just show
+nothing, best method is to use the [method show above](#inlining-svgstore-result-into-html-body) )
+
 
 ```js
 var gulp = require('gulp');
@@ -170,7 +180,7 @@ gulp.task('svgstore', function () {
         .src('test/src/*.svg')
         .pipe(svgstore({ inlineSvg: true }))
         .pipe(cheerio(function ($) {
-            $('svg').attr('style', 'display:none');
+            $('svg').attr('style',  'display:none');
         }))
         .pipe(gulp.dest('test/dest'));
 });

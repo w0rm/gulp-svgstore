@@ -12,7 +12,7 @@ module.exports = function (config) {
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
-  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" ><defs></defs></svg>'
+  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" ><defs/></svg>'
   if (!inlineSvg) {
     resultSvg =
       '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -23,7 +23,7 @@ module.exports = function (config) {
 
   var $ = cheerio.load(resultSvg, { xmlMode: true })
   var $combinedSvg = $('svg')
-  var $combinedDefs = $('defs').first()
+  var $combinedDefs = $('defs')
 
   return through2.obj(
 
@@ -66,7 +66,7 @@ module.exports = function (config) {
         $symbol.attr('viewBox', viewBoxAttr)
       }
 
-      var $def = file.cheerio('defs').first();
+      var $def = file.cheerio('defs');
       var defContent = $def.length && $def.html();
       if(defContent){
         $combinedDefs.append(defContent);
