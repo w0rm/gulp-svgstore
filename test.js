@@ -192,7 +192,6 @@ describe('gulp-svgstore unit test', function () {
 
     stream.on('data', function(file){
       var result = file.contents.toString()
-      console.log(result)
       var target =
         '<svg xmlns="http://www.w3.org/2000/svg">' +
         '<defs><circle id="circ" cx="2" cy="2" r="1"/></defs>' +
