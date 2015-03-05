@@ -119,7 +119,6 @@ describe('gulp-svgstore unit test', function () {
       var result = file.contents.toString()
       var target =
       '<svg xmlns="http://www.w3.org/2000/svg">' +
-      '<defs/>' +
       '<symbol id="circle" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></symbol>' +
       '<symbol id="square"><rect x="1" y="1" width="2" height="2"/></symbol>' +
       '</svg>'
@@ -155,7 +154,6 @@ describe('gulp-svgstore unit test', function () {
       var result = file.contents.toString()
       var target =
       '<svg xmlns="http://www.w3.org/2000/svg">' +
-      '<defs/>' +
       '<symbol id="square"><circle cx="2" cy="2" r="1"/></symbol>' +
       '</svg>'
       assert.equal( result, target )
@@ -186,7 +184,7 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
-  it('should merge defs to parent svg file', function(done){
+  it('should merge defs to parent svg file', function (done) {
 
     var stream = svgstore({ inlineSvg: true })
 
@@ -196,28 +194,31 @@ describe('gulp-svgstore unit test', function () {
         '<svg xmlns="http://www.w3.org/2000/svg">' +
         '<defs><circle id="circ" cx="2" cy="2" r="1"/></defs>' +
         '<symbol id="circle" viewBox="0 0 4 4"/>' +
-        '</svg>'  
+        '</svg>'
       assert.equal( result, target )
       done()
-
     })
 
     stream.write(new gutil.File({
-      contents: new Buffer('<svg viewBox="0 0 4 4"><defs><circle id="circ" cx="2" cy="2" r="1"/></svg>/defs><circle cx="2" cy="2" r="1"/></svg>')
+      contents: new Buffer(
+        '<svg viewBox="0 0 4 4">' +
+        '<defs><circle id="circ" cx="2" cy="2" r="1"/></svg></defs>' +
+        '<circle cx="2" cy="2" r="1"/>' +
+        '</svg>'
+      )
     , path: 'circle.svg'
     }))
 
     stream.end()
 
-
   })
-  
+
   it('should emit error if files have the same name', function (done) {
 
       var stream = svgstore()
 
       stream.on('error', function (error) {
-        assert.ok(error instanceof gutil.PluginError);
+        assert.ok(error instanceof gutil.PluginError)
         assert.equal(error.message, 'File name should be unique: circle')
         done()
       })

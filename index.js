@@ -66,14 +66,11 @@ module.exports = function (config) {
         $symbol.attr('viewBox', viewBoxAttr)
       }
 
-      var $def = file.cheerio('defs');
-      var defContent = $def.length && $def.html();
-      if(defContent){
-        $combinedDefs.append(defContent);
-
+      var $defs = file.cheerio('defs')
+      if ($defs.length > 0) {
+        $combinedDefs.append($defs.contents())
+        $defs.remove()
       }
-
-      $def.remove();
 
       $symbol.append($svg.contents())
       $combinedSvg.append($symbol)
@@ -82,6 +79,9 @@ module.exports = function (config) {
 
   , function flush (cb) {
       if (isEmpty) return cb()
+      if ($combinedDefs.contents().length === 0) {
+        $combinedDefs.remove()
+      }
       var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
       file.cheerio = $
       this.push(file)
