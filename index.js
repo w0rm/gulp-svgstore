@@ -12,7 +12,7 @@ module.exports = function (config) {
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
-  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" />'
+  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" ><defs/></svg>'
   if (!inlineSvg) {
     resultSvg =
       '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -23,6 +23,7 @@ module.exports = function (config) {
 
   var $ = cheerio.load(resultSvg, { xmlMode: true })
   var $combinedSvg = $('svg')
+  var $combinedDefs = $('defs')
 
   return through2.obj(
 
@@ -65,6 +66,12 @@ module.exports = function (config) {
         $symbol.attr('viewBox', viewBoxAttr)
       }
 
+      var $defs = file.cheerio('defs')
+      if ($defs.length > 0) {
+        $combinedDefs.append($defs.contents())
+        $defs.remove()
+      }
+
       $symbol.append($svg.contents())
       $combinedSvg.append($symbol)
       cb()
@@ -72,6 +79,9 @@ module.exports = function (config) {
 
   , function flush (cb) {
       if (isEmpty) return cb()
+      if ($combinedDefs.contents().length === 0) {
+        $combinedDefs.remove()
+      }
       var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
       file.cheerio = $
       this.push(file)

@@ -39,9 +39,6 @@ gulp.task('inline-svg', function () {
       parserOptions: { xmlMode: true }
     }))
     .pipe(svgstore({ inlineSvg: true }))
-    .pipe(cheerio(function ($) {
-      $('svg').attr('style', 'display:none')
-    }))
 
   return gulp
     .src('test/src/inline-svg.html')

@@ -184,12 +184,41 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
+  it('should merge defs to parent svg file', function (done) {
+
+    var stream = svgstore({ inlineSvg: true })
+
+    stream.on('data', function(file){
+      var result = file.contents.toString()
+      var target =
+        '<svg xmlns="http://www.w3.org/2000/svg">' +
+        '<defs><circle id="circ" cx="2" cy="2" r="1"/></defs>' +
+        '<symbol id="circle" viewBox="0 0 4 4"/>' +
+        '</svg>'
+      assert.equal( result, target )
+      done()
+    })
+
+    stream.write(new gutil.File({
+      contents: new Buffer(
+        '<svg viewBox="0 0 4 4">' +
+        '<defs><circle id="circ" cx="2" cy="2" r="1"/></svg></defs>' +
+        '<circle cx="2" cy="2" r="1"/>' +
+        '</svg>'
+      )
+    , path: 'circle.svg'
+    }))
+
+    stream.end()
+
+  })
+
   it('should emit error if files have the same name', function (done) {
 
       var stream = svgstore()
 
       stream.on('error', function (error) {
-        assert.ok(error instanceof gutil.PluginError);
+        assert.ok(error instanceof gutil.PluginError)
         assert.equal(error.message, 'File name should be unique: circle')
         done()
       })
