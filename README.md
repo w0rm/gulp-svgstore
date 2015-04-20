@@ -54,7 +54,7 @@ In your html file:
 <div style="height: 0; width: 0; position: absolute; visibility: hidden">
   <!-- inject:svg --><!-- endinject -->
 </div>
-``` 
+```
 In your gulp tasks:
 
 ```js
@@ -223,6 +223,9 @@ gulp.task('metadata', function () {
 ```
 
 ## Changelog
+
+* 5.0.1
+  * Removed cheerio from devDependencies #34
 
 * 5.0.0
   * Removed prefix and fileName options

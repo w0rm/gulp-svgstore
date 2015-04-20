@@ -1,6 +1,6 @@
 {
   "name": "gulp-svgstore",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Combine svg files into one with <symbol> elements",
   "main": "index.js",
   "scripts": {
@@ -20,18 +20,15 @@
   },
   "homepage": "https://github.com/w0rm/gulp-svgstore",
   "dependencies": {
+    "cheerio": "0.*",
     "gulp-util": "^3.0.0",
     "through2": "^0.4.1"
   },
-  "peerDependencies": {
-    "cheerio": "0.*"
-  },
   "devDependencies": {
-    "cheerio": "0.*",
     "connect": "^3.1.0",
     "gm": "^1.16.0",
     "gulp": "^3.6.2",
-    "gulp-cheerio": "^0.4.0",
+    "gulp-cheerio": "^0.6.2",
     "gulp-inject": "^1.0.1",
     "gulp-mocha": "^0.5.2",
     "serve-static": "^1.4.3",
