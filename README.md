@@ -202,7 +202,7 @@ gulp.task('metadata', function () {
     return gulp
         .src('test/src/*.svg')
         .pipe(svgstore())
-        .pipe(though2.obj(function (file, encoding, cb) {
+        .pipe(through2.obj(function (file, encoding, cb) {
             var $ = file.cheerio;
             var data = $('svg > symbol').map(function () {
                 return {
