@@ -224,6 +224,9 @@ gulp.task('metadata', function () {
 
 ## Changelog
 
+* 5.0.2
+  * Updated direct dependencies
+
 * 5.0.1
   * Removed cheerio from devDependencies #34
 
