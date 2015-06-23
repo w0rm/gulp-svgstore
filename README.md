@@ -11,7 +11,7 @@ Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-go
 If you need similar plugin for grunt,  
 I encourage you to check [grunt-svgstore](https://github.com/FWeinb/grunt-svgstore).
 
-## Options:
+### Options:
 
 The following options are set automatically based on file data:
 
