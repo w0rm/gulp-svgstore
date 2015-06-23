@@ -5,7 +5,7 @@ gulp-svgstore
 
 <img align="right" width="130" height="175"
      title="SVG Superman"
-     src="![](https://github.com/w0rm/gulp-svgstore/blob/master/svg-superman.png)">
+     src="https://github.com/w0rm/gulp-svgstore/blob/master/svg-superman.png">
 
 Combine svg files into one with `<symbol>` elements.
 Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-good-choice-icons/).
