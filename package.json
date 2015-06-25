@@ -21,8 +21,7 @@
   "homepage": "https://github.com/w0rm/gulp-svgstore",
   "dependencies": {
     "cheerio": "0.*",
-    "gulp-util": "^3.0.0",
-    "through2": "^0.6.5"
+    "gulp-util": "^3.0.0"
   },
   "devDependencies": {
     "connect": "^3.1.0",
