@@ -41,8 +41,13 @@ module.exports = function (config) {
     var viewBoxAttr = $svg.attr('viewBox')
     var $symbol = $('<symbol/>')
 
-    if (idAttr in ids) {
-      return cb(new gutil.PluginError('gulp-svgstore', 'File name should be unique: ' + idAttr))
+    while (idAttr in ids) {
+      if (!idAttr.match(/-[0-9]+$/)) {
+        idAttr += "-1"
+      } else {
+        var index = idAttr.lastIndexOf('-') + 1
+        idAttr = idAttr.substr(0,index) + (parseInt(idAttr.substr(index)) + 1)
+      }
     }
 
     ids[idAttr] = true
