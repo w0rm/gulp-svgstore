@@ -8,7 +8,7 @@ module.exports = function (config) {
   config = config || {}
 
   var isEmpty = true
-  var fileName
+  var fileName = config.filename || false
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
