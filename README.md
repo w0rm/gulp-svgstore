@@ -30,17 +30,28 @@ The following script will combine all svg sources into single svg file with `<sy
 The name of result svg is the base directory name of the first file `src.svg`.
 
 Additionally pass through [gulp-svgmin](https://github.com/ben-eb/gulp-svgmin)
-to minimize svg payload size.
+to minify svg and ensure unique ids.
 
 ```js
 var gulp = require('gulp');
 var svgstore = require('gulp-svgstore');
 var svgmin = require('gulp-svgmin');
+var path = require('path');
 
 gulp.task('svgstore', function () {
     return gulp
         .src('test/src/*.svg')
-        .pipe(svgmin())
+        .pipe(svgmin(function (file) {
+            var prefix = path.basename(file.relative, path.extname(file.relative));
+            return {
+                plugins: [{
+                    cleanupIDs: {
+                        prefix: prefix + '-',
+                        minify: true
+                    }
+                }]
+            }
+        }))
         .pipe(svgstore())
         .pipe(gulp.dest('test/dest'));
 });
@@ -226,6 +237,9 @@ gulp.task('metadata', function () {
 ```
 
 ## Changelog
+
+* 5.0.3
+  * Updated readme with a way to ensure unique ids
 
 * 5.0.2
   * Updated direct dependencies
