@@ -6,6 +6,9 @@ var Stream = require('stream')
 module.exports = function (config) {
 
   config = config || {}
+  
+  var namespaces = {};//Set
+  var blacklistAttributes = ['xmlns', 'width', 'height', 'x', 'y'];
 
   var isEmpty = true
   var fileName
@@ -37,8 +40,11 @@ module.exports = function (config) {
     }
 
     var $svg = file.cheerio('svg')
+    if($svg.length < 1)
+      return cb();//not an svg file apparently
+
+    var attrs = $svg[0].attribs;
     var idAttr = path.basename(file.relative, path.extname(file.relative))
-    var viewBoxAttr = $svg.attr('viewBox')
     var $symbol = $('<symbol/>')
 
     if (idAttr in ids) {
@@ -61,9 +67,26 @@ module.exports = function (config) {
     }
 
     $symbol.attr('id', idAttr)
-    if (viewBoxAttr) {
-      $symbol.attr('viewBox', viewBoxAttr)
-    }
+    
+    for(var attrName in attrs)
+      if( blacklistAttribute.indexOf(attrName) < 0){
+        //special treatment for namespaces
+        if(attrName.match(/xmlns:.+/)){
+          var storedNs = namespaces[attrName],
+              ns = attrs[attrName];
+
+          if(storedNs){
+            if( storedNs != ns)
+              gutil.log(gutil.colors.yellow( 
+                attrName + ' namespace appeared multiple times with different value.' +
+                ' Keeping the first one : "' + storedNs +
+                '".\nEach namespace must be unique across files.'));
+          }else
+            namespaces[attrName] = ns;
+        }
+        else
+          $symbol.attr(attrName, attrs[attrName])
+      }
 
     var $defs = file.cheerio('defs')
     if ($defs.length > 0) {
@@ -81,6 +104,9 @@ module.exports = function (config) {
     if ($combinedDefs.contents().length === 0) {
       $combinedDefs.remove()
     }
+    for(var nsName in namespaces)
+      $combinedSvg.attr(nsName, namespaces[nsName]);
+      
     var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
     file.cheerio = $
     this.push(file)
