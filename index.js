@@ -69,7 +69,7 @@ module.exports = function (config) {
     $symbol.attr('id', idAttr)
     
     for(var attrName in attrs)
-      if( blacklistAttribute.indexOf(attrName) < 0){
+      if(blacklistAttributes.indexOf(attrName) < 0){
         //special treatment for namespaces
         if(attrName.match(/xmlns:.+/)){
           var storedNs = namespaces[attrName],
