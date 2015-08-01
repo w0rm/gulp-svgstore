@@ -140,6 +140,39 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
+  it('should not include null or invalid files', function (done) {
+
+    var stream = svgstore({ inlineSvg: true })
+
+    stream.on('data', function (file) {
+      var result = file.contents.toString()
+      var target =
+      '<svg xmlns="http://www.w3.org/2000/svg">' +
+      '<symbol id="circle" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></symbol>' +
+      '</svg>'
+      assert.equal( result, target )
+      done()
+    })
+
+    stream.write(new gutil.File({
+      contents: new Buffer('<svg viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></svg>')
+    , path: 'circle.svg'
+    }))
+
+    stream.write(new gutil.File({
+      contents: null
+    , path: 'square.svg'
+    }))
+
+    stream.write(new gutil.File({
+      contents: new Buffer('not an svg')
+    , path: 'square.svg'
+    }))
+
+    stream.end()
+
+  })
+
   it('should use cached cheerio object instead of file contents', function (done) {
 
     var stream = svgstore({ inlineSvg: true })
