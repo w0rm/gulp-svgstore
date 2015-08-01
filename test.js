@@ -39,7 +39,6 @@ function compareScreenshots (path1, path2) {
   })
 }
 
-/*
 describe('gulp-svgstore usage test', function () {
 
   this.timeout(10000)
@@ -89,10 +88,8 @@ describe('gulp-svgstore usage test', function () {
   })
 
 })
-*/
 
 describe('gulp-svgstore unit test', function () {
-/*
   it('should not create empty svg file', function (done) {
 
     var stream = svgstore()
@@ -279,7 +276,7 @@ describe('gulp-svgstore unit test', function () {
       stream.end()
 
   })
-*/
+
   it('should include all namespace into final svg', function (done) {
 
       var stream = svgstore()
