@@ -32,11 +32,16 @@ module.exports = function (config) {
       return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
     }
 
+    if (file.isNull()) return cb()
+
     if (!file.cheerio) {
       file.cheerio = cheerio.load(file.contents.toString(), { xmlMode: true })
     }
 
     var $svg = file.cheerio('svg')
+
+    if ($svg.length === 0) return cb()
+
     var idAttr = path.basename(file.relative, path.extname(file.relative))
     var viewBoxAttr = $svg.attr('viewBox')
     var $symbol = $('<symbol/>')
