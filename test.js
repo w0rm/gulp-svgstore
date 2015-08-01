@@ -39,6 +39,7 @@ function compareScreenshots (path1, path2) {
   })
 }
 
+
 describe('gulp-svgstore usage test', function () {
 
   this.timeout(10000)
@@ -89,7 +90,9 @@ describe('gulp-svgstore usage test', function () {
 
 })
 
+
 describe('gulp-svgstore unit test', function () {
+  
   it('should not create empty svg file', function (done) {
 
     var stream = svgstore()

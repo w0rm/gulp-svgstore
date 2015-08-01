@@ -38,10 +38,12 @@ module.exports = function (config) {
     }
 
     var $svg = file.cheerio('svg')
-    if($svg.length < 1)
+    if($svg.length < 1){
       return cb()//not an svg file apparently
+    }
 
     var idAttr = path.basename(file.relative, path.extname(file.relative))
+    var viewBoxAttr = $svg.attr('viewBox')
     var $symbol = $('<symbol/>')
 
     if (idAttr in ids) {
@@ -64,6 +66,9 @@ module.exports = function (config) {
     }
 
     $symbol.attr('id', idAttr)
+    if (viewBoxAttr) {
+-      $symbol.attr('viewBox', viewBoxAttr)
+    }
     
     var attrs = $svg[0].attribs
     for(var attrName in attrs){
