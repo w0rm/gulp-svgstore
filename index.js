@@ -67,7 +67,7 @@ module.exports = function (config) {
 
     $symbol.attr('id', idAttr)
     if (viewBoxAttr) {
--      $symbol.attr('viewBox', viewBoxAttr)
+      $symbol.attr('viewBox', viewBoxAttr)
     }
     
     var attrs = $svg[0].attribs
