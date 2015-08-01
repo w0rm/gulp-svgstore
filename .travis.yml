@@ -3,11 +3,9 @@ node_js:
   - '0.10'
   - '0.12'
   - iojs
-addons:
-  apt:
-    packages:
-    - graphicsmagick
-sudo: false
+sudo: true
+before_install:
+  - sudo apt-get install graphicsmagick
 env:
   global:
   - secure: LK3KvcJyMhVa4yAGSCrZ7cb2oGmlGDRFn/yEmkxZ7eu8gW32mp9IBcyuHboSxNnSlZT088cFp8H7ly1kfXs1anZzrRD9GBeNiyVBS8pgidMsKM7JvHDG54HygwHag4xdzZHyxUSEhBFP50VCDrpS3EE1KI6/AMRyVjv0kH5CWHI=
