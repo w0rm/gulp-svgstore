@@ -238,6 +238,9 @@ gulp.task('metadata', function () {
 
 ## Changelog
 
+* 5.0.4
+  * Skip null and invalid files
+
 * 5.0.3
   * Updated readme with a way to ensure unique ids
 
