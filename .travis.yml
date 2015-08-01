@@ -5,7 +5,7 @@ node_js:
   - iojs
 addons:
   apt:
-    sources:
+    packages:
     - graphicsmagick
 sudo: false
 env:
