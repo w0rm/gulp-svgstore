@@ -6,7 +6,7 @@ var Stream = require('stream')
 module.exports = function (config) {
 
   config = config || {}
-  
+
   var namespaces = {}
   var isEmpty = true
   var fileName

@@ -92,7 +92,7 @@ describe('gulp-svgstore usage test', function () {
 
 
 describe('gulp-svgstore unit test', function () {
- 
+
   it('should not create empty svg file', function (done) {
 
     var stream = svgstore()
