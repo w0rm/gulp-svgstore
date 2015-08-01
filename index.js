@@ -7,9 +7,7 @@ module.exports = function (config) {
 
   config = config || {}
   
-  var namespaces = {};//Set
-  var blacklistAttributes = ['xmlns', 'width', 'height', 'x', 'y'];
-
+  var namespaces = {}
   var isEmpty = true
   var fileName
   var inlineSvg = config.inlineSvg || false
@@ -41,9 +39,8 @@ module.exports = function (config) {
 
     var $svg = file.cheerio('svg')
     if($svg.length < 1)
-      return cb();//not an svg file apparently
+      return cb()//not an svg file apparently
 
-    var attrs = $svg[0].attribs;
     var idAttr = path.basename(file.relative, path.extname(file.relative))
     var $symbol = $('<symbol/>')
 
@@ -68,25 +65,35 @@ module.exports = function (config) {
 
     $symbol.attr('id', idAttr)
     
-    for(var attrName in attrs)
-      if(blacklistAttributes.indexOf(attrName) < 0){
-        //special treatment for namespaces
-        if(attrName.match(/xmlns:.+/)){
-          var storedNs = namespaces[attrName],
-              ns = attrs[attrName];
+    var attrs = $svg[0].attribs
+    for(var attrName in attrs){
+      if(attrName.match(/xmlns:.+/)){
+        var storedNs = namespaces[attrName],
+            attrNs = attrs[attrName]
 
-          if(storedNs){
-            if( storedNs != ns)
-              gutil.log(gutil.colors.yellow( 
-                attrName + ' namespace appeared multiple times with different value.' +
-                ' Keeping the first one : "' + storedNs +
-                '".\nEach namespace must be unique across files.'));
-          }else
-            namespaces[attrName] = ns;
+        if(storedNs != null){
+          if( storedNs != attrNs){
+            gutil.log(gutil.colors.red( 
+              attrName + ' namespace appeared multiple times with different value.' +
+              ' Keeping the first one : "' + storedNs +
+              '".\nEach namespace must be unique across files.'))
+          }
+        }else{
+          for(var nsName in namespaces){
+            if(namespaces[nsName] == attrNs){
+               gutil.log(gutil.colors.yellow(
+                'Same namespace value under different names : ' + 
+                  nsName + 
+                  ' and ' + 
+                  attrName + 
+                '.\nKeeping both.'))
+            }
+          }
+
+          namespaces[attrName] = attrNs;
         }
-        else
-          $symbol.attr(attrName, attrs[attrName])
       }
+    }
 
     var $defs = file.cheerio('defs')
     if ($defs.length > 0) {

@@ -39,7 +39,7 @@ function compareScreenshots (path1, path2) {
   })
 }
 
-
+/*
 describe('gulp-svgstore usage test', function () {
 
   this.timeout(10000)
@@ -89,10 +89,10 @@ describe('gulp-svgstore usage test', function () {
   })
 
 })
-
+*/
 
 describe('gulp-svgstore unit test', function () {
-
+/*
   it('should not create empty svg file', function (done) {
 
     var stream = svgstore()
@@ -278,6 +278,106 @@ describe('gulp-svgstore unit test', function () {
 
       stream.end()
 
+  })
+*/
+  it('should include all namespace into final svg', function (done) {
+
+      var stream = svgstore()
+
+      stream.on('data', function (file) {
+        var $resultSvg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
+
+      assert.equal( $resultSvg.attr('xmlns' ), 'http://www.w3.org/2000/svg')
+      assert.equal( $resultSvg.attr('xmlns:xlink' ), 'http://www.w3.org/1999/xlink')
+      done()
+      })
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg">' +
+            '<rect width="1" height="1"/>' +
+          '</svg>')
+      , path: 'rect.svg'
+      }))
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + 
+              'viewBox="0 0 50 50">' + 
+            '<rect id="a" width="50" height="10"/>' + 
+            '<use y="20" xlink:href="#a"/>' + 
+            '<use y="40" xlink:href="#a"/>' + 
+          '</svg>')
+      , path: 'sandwich.svg'
+      }))
+
+      stream.end()
+
+  })
+
+  it('Warn about duplicate namespace value under different name', function (done) {
+
+      var stream = svgstore()
+
+      stream.on('data', function () {
+        //TODO test stdout
+      done()
+      })
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:lk="http://www.w3.org/1999/xlink">' +
+            '<rect id="a" width="1" height="1"/>' +
+            '<use y="2" lk:href="#a"/>' +
+          '</svg>')
+      , path: 'rect.svg'
+      }))
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + 
+              'viewBox="0 0 50 50">' + 
+            '<rect id="a" width="50" height="10"/>' + 
+            '<use y="20" xlink:href="#a"/>' + 
+            '<use y="40" xlink:href="#a"/>' + 
+          '</svg>')
+      , path: 'sandwich.svg'
+      }))
+
+      stream.end()
+
+  })
+
+  it('Strong warn about duplicate namespace name with different value', function (done) {
+
+      var stream = svgstore()
+
+      stream.on('data', function () {
+        //TODO test stdout
+      done()
+      })
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1998/xlink">' +
+            '<rect id="a" width="1" height="1"/>' +
+            '<use y="2" xlink:href="#a"/>' +
+          '</svg>')
+      , path: 'rect.svg'
+      }))
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + 
+              'viewBox="0 0 50 50">' + 
+            '<rect id="a" width="50" height="10"/>' + 
+            '<use y="20" xlink:href="#a"/>' + 
+            '<use y="40" xlink:href="#a"/>' + 
+          '</svg>')
+      , path: 'sandwich.svg'
+      }))
+
+      stream.end()
   })
 
 })
