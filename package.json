@@ -3,6 +3,9 @@
   "version": "5.0.4",
   "description": "Combine svg files into one with <symbol> elements",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "test": "gulp test"
   },
