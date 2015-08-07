@@ -320,9 +320,9 @@ describe('gulp-svgstore unit test', function () {
       stream.on('data', function (file) {
         var $resultSvg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
 
-      assert.equal( $resultSvg.attr('xmlns' ), 'http://www.w3.org/2000/svg')
-      assert.equal( $resultSvg.attr('xmlns:xlink' ), 'http://www.w3.org/1999/xlink')
-      done()
+        assert.equal( $resultSvg.attr('xmlns' ), 'http://www.w3.org/2000/svg')
+        assert.equal( $resultSvg.attr('xmlns:xlink' ), 'http://www.w3.org/1999/xlink')
+        done()
       })
 
       stream.write(new gutil.File({
@@ -335,11 +335,11 @@ describe('gulp-svgstore unit test', function () {
 
       stream.write(new gutil.File({
         contents: new Buffer(
-          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + 
-              'viewBox="0 0 50 50">' + 
-            '<rect id="a" width="50" height="10"/>' + 
-            '<use y="20" xlink:href="#a"/>' + 
-            '<use y="40" xlink:href="#a"/>' + 
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
+              'viewBox="0 0 50 50">' +
+            '<rect id="a" width="50" height="10"/>' +
+            '<use y="20" xlink:href="#a"/>' +
+            '<use y="40" xlink:href="#a"/>' +
           '</svg>')
       , path: 'sandwich.svg'
       }))
@@ -354,7 +354,7 @@ describe('gulp-svgstore unit test', function () {
 
       stream.on('data', function () {
         //TODO test stdout
-      done()
+        done()
       })
 
       stream.write(new gutil.File({
@@ -368,11 +368,11 @@ describe('gulp-svgstore unit test', function () {
 
       stream.write(new gutil.File({
         contents: new Buffer(
-          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + 
-              'viewBox="0 0 50 50">' + 
-            '<rect id="a" width="50" height="10"/>' + 
-            '<use y="20" xlink:href="#a"/>' + 
-            '<use y="40" xlink:href="#a"/>' + 
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
+              'viewBox="0 0 50 50">' +
+            '<rect id="a" width="50" height="10"/>' +
+            '<use y="20" xlink:href="#a"/>' +
+            '<use y="40" xlink:href="#a"/>' +
           '</svg>')
       , path: 'sandwich.svg'
       }))
@@ -387,7 +387,7 @@ describe('gulp-svgstore unit test', function () {
 
       stream.on('data', function () {
         //TODO test stdout
-      done()
+        done()
       })
 
       stream.write(new gutil.File({
@@ -401,11 +401,11 @@ describe('gulp-svgstore unit test', function () {
 
       stream.write(new gutil.File({
         contents: new Buffer(
-          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + 
-              'viewBox="0 0 50 50">' + 
-            '<rect id="a" width="50" height="10"/>' + 
-            '<use y="20" xlink:href="#a"/>' + 
-            '<use y="40" xlink:href="#a"/>' + 
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
+              'viewBox="0 0 50 50">' +
+            '<rect id="a" width="50" height="10"/>' +
+            '<use y="20" xlink:href="#a"/>' +
+            '<use y="40" xlink:href="#a"/>' +
           '</svg>')
       , path: 'sandwich.svg'
       }))
