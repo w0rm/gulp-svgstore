@@ -1,4 +1,4 @@
-/* global describe, it, before, after */
+/* global describe, it, before, after, beforeEach, afterEach */
 
 var username = process.env.SAUCE_USERNAME || 'SAUCE_USERNAME'
 var accessKey = process.env.SAUCE_ACCESS_KEY || 'SAUCE_ACCESS_KEY'
@@ -13,7 +13,8 @@ var tmp = require('tmp')
 var svgstore = require('./index')
 var gutil = require('gulp-util')
 var cheerio = require('cheerio')
-
+var sinon = require('sinon')
+var sandbox = sinon.sandbox.create()
 tmp.setGracefulCleanup()
 
 
@@ -92,6 +93,14 @@ describe('gulp-svgstore usage test', function () {
 
 
 describe('gulp-svgstore unit test', function () {
+
+  beforeEach(function () {
+    sandbox.stub(gutil, 'log')
+  })
+
+  afterEach(function () {
+    sandbox.restore()
+  })
 
   it('should not create empty svg file', function (done) {
 
@@ -353,7 +362,13 @@ describe('gulp-svgstore unit test', function () {
       var stream = svgstore()
 
       stream.on('data', function () {
-        //TODO test stdout
+        assert.equal(
+          gutil.colors.yellow(
+            'Same namespace value under different names : xmlns:lk and xmlns:xlink.\n' +
+            'Keeping both.'
+          ),
+          gutil.log.getCall(0).args[0]
+        )
         done()
       })
 
@@ -386,7 +401,14 @@ describe('gulp-svgstore unit test', function () {
       var stream = svgstore()
 
       stream.on('data', function () {
-        //TODO test stdout
+        assert.equal(
+          gutil.colors.red(
+            'xmlns:xlink namespace appeared multiple times with different value. ' +
+            'Keeping the first one : "http://www.w3.org/1998/xlink".\n' +
+            'Each namespace must be unique across files.'
+          ),
+          gutil.log.getCall(0).args[0]
+        )
         done()
       })
 

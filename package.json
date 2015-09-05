@@ -34,6 +34,7 @@
     "gulp-inject": "^1.0.1",
     "gulp-mocha": "^2.1.0",
     "serve-static": "^1.9.3",
+    "sinon": "^1.16.1",
     "tmp": "0.0.26",
     "wd": "^0.3.4"
   },
