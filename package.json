@@ -27,10 +27,9 @@
     "gulp-util": "^3.0.0"
   },
   "devDependencies": {
-    "connect": "^3.1.0",
+    "finalhandler": "^0.4.0",
     "gm": "^1.18.1",
     "gulp": "^3.6.2",
-    "gulp-cheerio": "^0.6.2",
     "gulp-inject": "^1.0.1",
     "gulp-mocha": "^2.1.0",
     "serve-static": "^1.9.3",

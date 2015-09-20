@@ -33,9 +33,9 @@ function writeScreenshot (data) {
 
 function compareScreenshots (path1, path2) {
   return Q.Promise(function (resolve, reject) {
-    gm.compare(path1, path2, function (err, isEqual, equality, raw) {
+    gm.compare(path1, path2, function (err, isEqual, equality) {
       if (err) reject(new Error(err))
-      resolve(isEqual, equality, raw)
+      resolve(isEqual && equality === 0)
     })
   })
 }
@@ -83,7 +83,7 @@ describe('gulp-svgstore usage test', function () {
       .then(function () {
         return compareScreenshots(screenshot1, screenshot2)
       })
-      .then(function (isEqual, equality, raw) { // jshint ignore:line
+      .then(function (isEqual) { // jshint ignore:line
         assert.ok(isEqual, 'Screenshots are different')
       })
       .nodeify(done)

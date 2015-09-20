@@ -1,30 +1,23 @@
 var svgstore = require('./index')
 var gulp = require('gulp')
 var mocha = require('gulp-mocha')
-var cheerio = require('gulp-cheerio')
-var connect = require('connect')
+var finalhandler = require('finalhandler')
 var serveStatic = require('serve-static')
 var http = require('http')
 var inject = require('gulp-inject')
 
 
-gulp.task('svg', function () {
+gulp.task('external', function () {
 
   return gulp
     .src('test/src/*.svg')
-    .pipe(cheerio({
-      run: function ($) {
-        $('[fill="none"]').removeAttr('fill')
-      },
-      parserOptions: { xmlMode: true }
-    }))
     .pipe(svgstore())
     .pipe(gulp.dest('test/dest'))
 
 })
 
 
-gulp.task('inline-svg', function () {
+gulp.task('inline', function () {
 
   function fileContents (filePath, file) {
     return file.contents.toString('utf8')
@@ -32,12 +25,6 @@ gulp.task('inline-svg', function () {
 
   var svgs = gulp
     .src('test/src/*.svg')
-    .pipe(cheerio({
-      run: function ($) {
-        $('[fill="none"]').removeAttr('fill')
-      },
-      parserOptions: { xmlMode: true }
-    }))
     .pipe(svgstore({ inlineSvg: true }))
 
   return gulp
@@ -48,11 +35,13 @@ gulp.task('inline-svg', function () {
 })
 
 
+gulp.task('test', ['external', 'inline'], function () {
 
-gulp.task('test', ['svg', 'inline-svg'], function () {
-
-  var app = connect().use(serveStatic('test'))
-  var server = http.createServer(app)
+  var serve = serveStatic('test')
+  var server = http.createServer(function(req, res){
+    var done = finalhandler(req, res)
+    serve(req, res, done)
+  })
 
   server.listen(process.env.PORT || 8888)
 
