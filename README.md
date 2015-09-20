@@ -274,6 +274,9 @@ Or you can go further and reduce the size by removing the `<use>` element, like 
 
 ## Changelog
 
+* 5.0.5
+  * Correctly set namespaces of the combined svg
+
 * 5.0.4
   * Skip null and invalid files
 
