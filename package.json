@@ -7,7 +7,7 @@
     "index.js"
   ],
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp build && mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -27,13 +27,13 @@
     "gulp-util": "^3.0.0"
   },
   "devDependencies": {
-    "connect": "^3.1.0",
+    "finalhandler": "^0.4.0",
     "gm": "^1.18.1",
     "gulp": "^3.6.2",
-    "gulp-cheerio": "^0.6.2",
     "gulp-inject": "^1.0.1",
-    "gulp-mocha": "^2.1.0",
+    "mocha": "^2.3.2",
     "serve-static": "^1.9.3",
+    "sinon": "^1.16.1",
     "tmp": "0.0.26",
     "wd": "^0.3.4"
   },

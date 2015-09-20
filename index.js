@@ -7,6 +7,7 @@ module.exports = function (config) {
 
   config = config || {}
 
+  var namespaces = {}
   var isEmpty = true
   var fileName
   var inlineSvg = config.inlineSvg || false
@@ -70,6 +71,37 @@ module.exports = function (config) {
       $symbol.attr('viewBox', viewBoxAttr)
     }
 
+    var attrs = $svg[0].attribs
+    for (var attrName in attrs) {
+      if (attrName.match(/xmlns:.+/)) {
+        var storedNs = namespaces[attrName]
+        var attrNs = attrs[attrName]
+
+        if (storedNs !== undefined) {
+          if (storedNs !== attrNs) {
+            gutil.log(gutil.colors.red(
+              attrName + ' namespace appeared multiple times with different value.' +
+              ' Keeping the first one : "' + storedNs +
+              '".\nEach namespace must be unique across files.'
+            ))
+          }
+        } else {
+          for (var nsName in namespaces) {
+            if (namespaces[nsName] === attrNs) {
+              gutil.log(gutil.colors.yellow(
+                'Same namespace value under different names : ' +
+                  nsName +
+                  ' and ' +
+                  attrName +
+                '.\nKeeping both.'
+              ))
+            }
+          }
+          namespaces[attrName] = attrNs;
+        }
+      }
+    }
+
     var $defs = file.cheerio('defs')
     if ($defs.length > 0) {
       $combinedDefs.append($defs.contents())
@@ -85,6 +117,9 @@ module.exports = function (config) {
     if (isEmpty) return cb()
     if ($combinedDefs.contents().length === 0) {
       $combinedDefs.remove()
+    }
+    for (var nsName in namespaces) {
+      $combinedSvg.attr(nsName, namespaces[nsName])
     }
     var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
     file.cheerio = $
