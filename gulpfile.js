@@ -1,9 +1,5 @@
 var svgstore = require('./index')
 var gulp = require('gulp')
-var mocha = require('gulp-mocha')
-var finalhandler = require('finalhandler')
-var serveStatic = require('serve-static')
-var http = require('http')
 var inject = require('gulp-inject')
 
 
@@ -34,24 +30,4 @@ gulp.task('inline', function () {
 
 })
 
-
-gulp.task('test', ['external', 'inline'], function () {
-
-  var serve = serveStatic('test')
-  var server = http.createServer(function(req, res){
-    var done = finalhandler(req, res)
-    serve(req, res, done)
-  })
-
-  server.listen(process.env.PORT || 8888)
-
-  function serverClose () {
-    server.close()
-  }
-
-  return gulp
-    .src('test.js', { read: false })
-    .pipe(mocha())
-    .on('end', serverClose)
-
-})
+gulp.task('build', ['external', 'inline'])

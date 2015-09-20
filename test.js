@@ -14,6 +14,9 @@ var svgstore = require('./index')
 var gutil = require('gulp-util')
 var cheerio = require('cheerio')
 var sinon = require('sinon')
+var finalhandler = require('finalhandler')
+var serveStatic = require('serve-static')
+var http = require('http')
 var sandbox = sinon.sandbox.create()
 tmp.setGracefulCleanup()
 
@@ -46,24 +49,41 @@ describe('gulp-svgstore usage test', function () {
   this.timeout(10000)
 
   var browser
+  var serve = serveStatic('test')
+  var server = http.createServer(function(req, res){
+    var done = finalhandler(req, res)
+    serve(req, res, done)
+  })
 
-  before(function (done) {
+  before(function () {
     browser = wd.promiseChainRemote('ondemand.saucelabs.com', 80, username, accessKey)
-    browser
-      .init({
+    return  Q.all([
+      browser.init({
         browserName: 'chrome'
       , 'tunnel-identifier': tunnelIdentifier
+      }),
+      Q.Promise(function (resolve) {
+        server.listen(process.env.PORT || 8888, function () {
+          resolve()
+        })
       })
-      .nodeify(done)
+    ])
   })
 
-  after(function (done) {
-    browser.quit().nodeify(done)
+  after(function () {
+    return Q.all([
+      browser.quit().then(function(){}),
+      Q.Promise(function (resolve) {
+        server.close()
+        server.unref()
+        resolve()
+      })
+    ])
   })
 
-  it('stored image should equal original svg', function (done) {
+  it('stored image should equal original svg', function () {
     var screenshot1, screenshot2
-    browser
+    return browser
       .get('http://localhost:' + port + '/inline-svg.html')
       .title()
       .then(function (title) {
@@ -86,7 +106,6 @@ describe('gulp-svgstore usage test', function () {
       .then(function (isEqual) { // jshint ignore:line
         assert.ok(isEqual, 'Screenshots are different')
       })
-      .nodeify(done)
   })
 
 })
