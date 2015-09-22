@@ -348,8 +348,8 @@ describe('gulp-svgstore unit test', function () {
       stream.on('data', function (file) {
         var $resultSvg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
 
-        assert.equal( $resultSvg.attr('xmlns' ), 'http://www.w3.org/2000/svg')
-        assert.equal( $resultSvg.attr('xmlns:xlink' ), 'http://www.w3.org/1999/xlink')
+        assert.equal($resultSvg.attr('xmlns'), 'http://www.w3.org/2000/svg')
+        assert.equal($resultSvg.attr('xmlns:xlink'), 'http://www.w3.org/1999/xlink')
         done()
       })
 
@@ -369,6 +369,37 @@ describe('gulp-svgstore unit test', function () {
             '<use y="20" xlink:href="#a"/>' +
             '<use y="40" xlink:href="#a"/>' +
           '</svg>')
+      , path: 'sandwich.svg'
+      }))
+
+      stream.end()
+
+  })
+
+  it('should not include duplicate namespaces into final svg', function (done) {
+
+      var stream = svgstore({ inlineSvg: true })
+
+      stream.on('data', function (file) {
+        assert.equal(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+          '<symbol id="rect"/><symbol id="sandwich"/></svg>',
+          file.contents.toString()
+        )
+        done()
+      })
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
+        )
+      , path: 'rect.svg'
+      }))
+
+      stream.write(new gutil.File({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
+        )
       , path: 'sandwich.svg'
       }))
 
