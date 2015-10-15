@@ -7,9 +7,6 @@ var port = process.env.PORT || 8888
 var wd = require('wd')
 var assert = require('assert')
 var Q = wd.Q
-var fs = require('fs')
-var gm = require('gm')
-var tmp = require('tmp')
 var svgstore = require('./index')
 var gutil = require('gulp-util')
 var cheerio = require('cheerio')
@@ -18,30 +15,6 @@ var finalhandler = require('finalhandler')
 var serveStatic = require('serve-static')
 var http = require('http')
 var sandbox = sinon.sandbox.create()
-tmp.setGracefulCleanup()
-
-
-function writeScreenshot (data) {
-  return Q.Promise(function (resolve, reject) {
-    tmp.tmpName(function (err, path) {
-      if (err) reject(new Error(err))
-      fs.writeFile(path, data, 'base64', function (err) {
-        if (err) reject(new Error(err))
-        resolve(path)
-      })
-    })
-  })
-}
-
-
-function compareScreenshots (path1, path2) {
-  return Q.Promise(function (resolve, reject) {
-    gm.compare(path1, path2, function (err, isEqual, equality) {
-      if (err) reject(new Error(err))
-      resolve(isEqual && equality === 0)
-    })
-  })
-}
 
 
 describe('gulp-svgstore usage test', function () {
@@ -82,7 +55,7 @@ describe('gulp-svgstore usage test', function () {
   })
 
   it('stored image should equal original svg', function () {
-    var screenshot1, screenshot2
+    var screenshot1
     return browser
       .get('http://localhost:' + port + '/inline-svg.html')
       .title()
@@ -90,21 +63,13 @@ describe('gulp-svgstore usage test', function () {
         assert.equal(title, 'gulp-svgstore', 'Test page is not loaded')
       })
       .takeScreenshot()
-      .then(writeScreenshot)
-      .then(function (path) {
-        screenshot1 = path
+      .then(function (data) {
+        screenshot1 = data
       })
       .get('http://localhost:' + port + '/dest/inline-svg.html')
       .takeScreenshot()
-      .then(writeScreenshot)
-      .then(function (path) {
-        screenshot2 = path
-      })
-      .then(function () {
-        return compareScreenshots(screenshot1, screenshot2)
-      })
-      .then(function (isEqual) { // jshint ignore:line
-        assert.ok(isEqual, 'Screenshots are different')
+      .then(function (screenshot2) {
+        assert(screenshot1.toString() === screenshot2.toString(), 'Screenshots are different')
       })
   })
 
