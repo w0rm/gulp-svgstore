@@ -35,11 +35,8 @@ module.exports = function (config) {
 
     if (file.isNull()) return cb()
 
-    if (!file.cheerio) {
-      file.cheerio = cheerio.load(file.contents.toString(), { xmlMode: true })
-    }
 
-    var $svg = file.cheerio('svg')
+    var $svg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
 
     if ($svg.length === 0) return cb()
 
@@ -102,7 +99,7 @@ module.exports = function (config) {
       }
     }
 
-    var $defs = file.cheerio('defs')
+    var $defs = $svg.find('defs')
     if ($defs.length > 0) {
       $combinedDefs.append($defs.contents())
       $defs.remove()
@@ -122,7 +119,6 @@ module.exports = function (config) {
       $combinedSvg.attr(nsName, namespaces[nsName])
     }
     var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
-    file.cheerio = $
     this.push(file)
     cb()
   }

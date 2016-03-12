@@ -166,50 +166,6 @@ describe('gulp-svgstore unit test', function () {
 
   })
 
-  it('should use cached cheerio object instead of file contents', function (done) {
-
-    var stream = svgstore({ inlineSvg: true })
-    var file = new gutil.File({
-      contents: new Buffer('<svg><rect x="1" y="1" width="2" height="2"/></svg>')
-    , path: 'square.svg'
-    })
-
-    file.cheerio = cheerio.load('<svg><circle cx="2" cy="2" r="1"/></svg>', { xmlMode: true })
-
-    stream.on('data', function (file) {
-      var result = file.contents.toString()
-      var target =
-      '<svg xmlns="http://www.w3.org/2000/svg">' +
-      '<symbol id="square"><circle cx="2" cy="2" r="1"/></symbol>' +
-      '</svg>'
-      assert.equal( result, target )
-      done()
-    })
-
-    stream.write(file)
-    stream.end()
-
-  })
-
-  it('should cache cheerio object for the result file', function (done) {
-
-    var stream = svgstore()
-
-    stream.on('data', function (file) {
-      assert.ok(file.cheerio)
-      assert.equal( file.contents.toString(), file.cheerio.xml() )
-      done()
-    })
-
-    stream.write(new gutil.File({
-      contents: new Buffer('<svg viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></svg>')
-    , path: 'circle.svg'
-    }))
-
-    stream.end()
-
-  })
-
   it('should merge defs to parent svg file', function (done) {
 
     var stream = svgstore({ inlineSvg: true })
