@@ -193,8 +193,11 @@ gulp.task('svgstore', function () {
     return gulp
         .src('test/src/*.svg')
         .pipe(svgstore({ inlineSvg: true }))
-        .pipe(cheerio(function ($) {
-            $('svg').attr('style',  'display:none');
+        .pipe(cheerio({
+            run: function ($) {
+                $('svg').attr('style',  'display:none');
+            },
+            parserOptions: { xmlMode: true }
         }))
         .pipe(gulp.dest('test/dest'));
 });
@@ -202,8 +205,8 @@ gulp.task('svgstore', function () {
 
 ## Extracting metadata from combined svg
 
-Since gulp-svgstore and gulp-cheerio plugins cache cheerio in gulp file object,
-you may use it in your pipeline to extract metadata from svg sources or combined svg.
+You can extract data with cheerio.
+
 The following example extracts viewBox and id from each symbol in combined svg.
 
 ```js
@@ -211,13 +214,14 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var svgstore = require('gulp-svgstore');
 var through2 = require('through2');
+var cheerio = require('cheerio');
 
 gulp.task('metadata', function () {
     return gulp
         .src('test/src/*.svg')
         .pipe(svgstore())
         .pipe(through2.obj(function (file, encoding, cb) {
-            var $ = file.cheerio;
+            var $ = cheerio.load(file.contents.toString(), {xmlMode: true});
             var data = $('svg > symbol').map(function () {
                 return {
                     name: $(this).attr('id'),
