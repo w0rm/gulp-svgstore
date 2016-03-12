@@ -278,6 +278,9 @@ Or you can go further and reduce the size by removing the `<use>` element, like 
 
 ## Changelog
 
+* 6.0.0
+  * Removed cache of the cheerio object #61
+
 * 5.0.5
   * Correctly set namespaces of the combined svg
 
