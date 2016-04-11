@@ -9,7 +9,7 @@ module.exports = function (config) {
 
   var namespaces = {}
   var isEmpty = true
-  var fileName
+  var fileName = config.fileName
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
@@ -50,7 +50,7 @@ module.exports = function (config) {
 
     ids[idAttr] = true
 
-    if (!fileName) {
+    if (!fileName || !/\.svg/.test(fileName)) {
       fileName = path.basename(file.base)
       if (fileName === '.' || !fileName) {
         fileName = 'svgstore.svg'
