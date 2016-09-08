@@ -24,6 +24,13 @@ The only available option is:
 
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: `false`.
 
+
+## Install
+
+```sh
+npm install gulp-svgstore --save-dev
+```
+
 ## Usage
 
 The following script will combine all svg sources into single svg file with `<symbol>` elements.
