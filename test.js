@@ -19,7 +19,7 @@ var sandbox = sinon.sandbox.create()
 
 describe('gulp-svgstore usage test', function () {
 
-  this.timeout(10000)
+  this.timeout(60 * 1000)
 
   var browser
   var serve = serveStatic('test')
