@@ -29,10 +29,12 @@ describe('gulp-svgstore usage test', function () {
   })
 
   before(function () {
+    this.timeout(5 * 60 * 1000)
     browser = wd.promiseChainRemote('ondemand.saucelabs.com', 80, username, accessKey)
     return  Q.all([
       browser.init({
         browserName: 'chrome'
+      , 'idle-timeout': 30 * 60 * 1000
       , 'tunnel-identifier': tunnelIdentifier
       }),
       Q.Promise(function (resolve) {
@@ -44,6 +46,7 @@ describe('gulp-svgstore usage test', function () {
   })
 
   after(function () {
+    this.timeout(5 * 60 * 1000)
     return Q.all([
       browser.quit().then(function(){}),
       Q.Promise(function (resolve) {
