@@ -19,7 +19,7 @@ var sandbox = sinon.sandbox.create()
 
 describe('gulp-svgstore usage test', function () {
 
-  this.timeout(60 * 1000)
+  this.timeout(10 * 1000)
 
   var browser
   var serve = serveStatic('test')
@@ -31,7 +31,7 @@ describe('gulp-svgstore usage test', function () {
   before(function () {
     this.timeout(5 * 60 * 1000)
     browser = wd.promiseChainRemote('ondemand.saucelabs.com', 80, username, accessKey)
-    return  Q.all([
+    return Q.all([
       browser.init({
         browserName: 'chrome'
       , 'idle-timeout': 30 * 1000
