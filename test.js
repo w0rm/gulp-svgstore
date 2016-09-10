@@ -34,7 +34,7 @@ describe('gulp-svgstore usage test', function () {
     return  Q.all([
       browser.init({
         browserName: 'chrome'
-      , 'idle-timeout': 30 * 60 * 1000
+      , 'idle-timeout': 30 * 1000
       , 'tunnel-identifier': tunnelIdentifier
       }),
       Q.Promise(function (resolve) {
