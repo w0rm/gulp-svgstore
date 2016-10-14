@@ -42,6 +42,7 @@ module.exports = function (config) {
 
     var idAttr = path.basename(file.relative, path.extname(file.relative))
     var viewBoxAttr = $svg.attr('viewBox')
+    var preserveAspectRatioAttr = $svg.attr('preserveAspectRatio')
     var $symbol = $('<symbol/>')
 
     if (idAttr in ids) {
@@ -66,6 +67,9 @@ module.exports = function (config) {
     $symbol.attr('id', idAttr)
     if (viewBoxAttr) {
       $symbol.attr('viewBox', viewBoxAttr)
+    }
+    if (preserveAspectRatioAttr) {
+      $symbol.attr('preserveAspectRatio', preserveAspectRatioAttr)
     }
 
     var attrs = $svg[0].attribs
