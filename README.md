@@ -285,6 +285,9 @@ Or you can go further and reduce the size by removing the `<use>` element, like 
 
 ## Changelog
 
+* 6.1.0
+  * Copy preserveAspectRatio attribute from source svg to to symbol #76
+
 * 6.0.0
   * Removed cache of the cheerio object #61
 
