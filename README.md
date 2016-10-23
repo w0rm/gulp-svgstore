@@ -3,7 +3,7 @@ gulp-svgstore [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)
 
 <img align="right" width="130" height="175"
      title="SVG Superman"
-     src="https://github.com/w0rm/gulp-svgstore/blob/master/svg-superman.png">
+     src="https://raw.githubusercontent.com/w0rm/gulp-svgstore/master/svg-superman.png">
 
 Combine svg files into one with `<symbol>` elements.  
 Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-good-choice-icons/).
@@ -127,16 +127,17 @@ e.g. `src/svg/one/two/three/circle.svg` becomes `one-two-three-circle`.
 
 ```js
 var gulp = require('gulp');
+var path = require('path');
 var rename = require('gulp-rename');
 var svgstore = require('gulp-svgstore');
 
 gulp.task('default', function () {
     return gulp
         .src('src/svg/**/*.svg', { base: 'src/svg' })
-        .pipe(rename(function (path) {
-            var name = path.dirname.split(path.sep);
-            name.push(path.basename);
-            path.basename = name.join('-');
+        .pipe(rename(function (file) {
+            var name = file.dirname.split(path.sep);
+            name.push(file.basename);
+            file.basename = name.join('-');
         }))
         .pipe(svgstore())
         .pipe(gulp.dest('dest'));
