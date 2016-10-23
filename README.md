@@ -69,10 +69,10 @@ gulp.task('svgstore', function () {
 To inline combined svg into html body I suggest using [gulp-inject](https://github.com/klei/gulp-inject).
 The following gulp task will inject svg into
 
-In your html file:
+In your html file (using [`visuallyhidden` from html5-boilerplate](https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css#L128) to fix the gradients):
 
 ```html
-<div style="height: 0; width: 0; position: absolute; visibility: hidden">
+<div class="visuallyhidden">
   <!-- inject:svg --><!-- endinject -->
 </div>
 ```
