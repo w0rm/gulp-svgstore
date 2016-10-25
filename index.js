@@ -44,6 +44,8 @@ module.exports = function (config) {
     var viewBoxAttr = $svg.attr('viewBox')
     var preserveAspectRatioAttr = $svg.attr('preserveAspectRatio')
     var $symbol = $('<symbol/>')
+    var $use = $('<use/>')
+    var $view = $('<view/>')
 
     if (idAttr in ids) {
       return cb(new gutil.PluginError('gulp-svgstore', 'File name should be unique: ' + idAttr))
@@ -108,6 +110,27 @@ module.exports = function (config) {
       $combinedDefs.append($defs.contents())
       $defs.remove()
     }
+
+    var $viewTag = $svg.find('viewtag')
+    if ($viewTag.length > 0) {
+      var viewAttrs = $viewTag[0].attribs;
+      for (var attr in viewAttrs) {
+        $view.attr(attr, viewAttrs[attr])
+      }
+      $viewTag.remove()
+      $combinedSvg.append($view)
+    }
+    
+    var $useTag = $svg.find('usetag')
+    if ($useTag.length > 0) {
+      var useAttrs = $useTag[0].attribs;
+      for (var useAttr in useAttrs) {
+        $use.attr(useAttr, useAttrs[useAttr])
+      }
+      $useTag.remove()
+      $combinedSvg.append($use)
+    }
+
 
     $symbol.append($svg.contents())
     $combinedSvg.append($symbol)
