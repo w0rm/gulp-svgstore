@@ -9,7 +9,7 @@ module.exports = function (config) {
 
   var namespaces = {}
   var isEmpty = true
-  var fileName
+  var fileName = config.filename || false
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
