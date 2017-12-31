@@ -5,10 +5,10 @@ gulp-svgstore [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)
      title="SVG Superman"
      src="https://raw.githubusercontent.com/w0rm/gulp-svgstore/master/svg-superman.png">
 
-Combine svg files into one with `<symbol>` elements.  
+Combine svg files into one with `<symbol>` elements.
 Read more about this in [CSS Tricks article](http://css-tricks.com/svg-symbol-good-choice-icons/).
 
-If you need similar plugin for grunt,  
+If you need similar plugin for grunt,
 I encourage you to check [grunt-svgstore](https://github.com/FWeinb/grunt-svgstore).
 
 ### Options:
@@ -219,7 +219,7 @@ The following example extracts viewBox and id from each symbol in combined svg.
 
 ```js
 var gulp = require('gulp');
-var gutil = require('gulp-util');
+var Vinyl = require('vinyl');
 var svgstore = require('gulp-svgstore');
 var through2 = require('through2');
 var cheerio = require('cheerio');
@@ -236,7 +236,7 @@ gulp.task('metadata', function () {
                     viewBox: $(this).attr('viewBox')
                 };
             }).get();
-            var jsonFile = new gutil.File({
+            var jsonFile = new Vinyl({
                 path: 'metadata.json',
                 contents: new Buffer(JSON.stringify(data))
             });

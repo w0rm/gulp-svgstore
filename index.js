@@ -1,7 +1,9 @@
 var cheerio = require('cheerio')
 var path = require('path')
-var gutil = require('gulp-util')
 var Stream = require('stream')
+var fancyLog = require('fancy-log')
+var PluginError = require('plugin-error')
+var Vinyl = require('vinyl')
 
 module.exports = function (config) {
 
@@ -30,7 +32,7 @@ module.exports = function (config) {
   stream._transform = function transform (file, encoding, cb) {
 
     if (file.isStream()) {
-      return cb(new gutil.PluginError('gulp-svgstore', 'Streams are not supported!'))
+      return cb(new PluginError('gulp-svgstore', 'Streams are not supported!'))
     }
 
     if (file.isNull()) return cb()
@@ -46,7 +48,7 @@ module.exports = function (config) {
     var $symbol = $('<symbol/>')
 
     if (idAttr in ids) {
-      return cb(new gutil.PluginError('gulp-svgstore', 'File name should be unique: ' + idAttr))
+      return cb(new PluginError('gulp-svgstore', 'File name should be unique: ' + idAttr))
     }
 
     ids[idAttr] = true
@@ -80,22 +82,22 @@ module.exports = function (config) {
 
         if (storedNs !== undefined) {
           if (storedNs !== attrNs) {
-            gutil.log(gutil.colors.red(
+            fancyLog.info(
               attrName + ' namespace appeared multiple times with different value.' +
               ' Keeping the first one : "' + storedNs +
               '".\nEach namespace must be unique across files.'
-            ))
+            )
           }
         } else {
           for (var nsName in namespaces) {
             if (namespaces[nsName] === attrNs) {
-              gutil.log(gutil.colors.yellow(
+              fancyLog.info(
                 'Same namespace value under different names : ' +
                   nsName +
                   ' and ' +
                   attrName +
                 '.\nKeeping both.'
-              ))
+              )
             }
           }
           namespaces[attrName] = attrNs;
@@ -122,7 +124,7 @@ module.exports = function (config) {
     for (var nsName in namespaces) {
       $combinedSvg.attr(nsName, namespaces[nsName])
     }
-    var file = new gutil.File({ path: fileName, contents: new Buffer($.xml()) })
+    var file = new Vinyl({ path: fileName, contents: new Buffer($.xml()) })
     this.push(file)
     cb()
   }

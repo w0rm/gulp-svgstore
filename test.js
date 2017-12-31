@@ -8,14 +8,15 @@ var wd = require('wd')
 var assert = require('assert')
 var Q = wd.Q
 var svgstore = require('./index')
-var gutil = require('gulp-util')
 var cheerio = require('cheerio')
 var sinon = require('sinon')
 var finalhandler = require('finalhandler')
 var serveStatic = require('serve-static')
 var http = require('http')
 var sandbox = sinon.sandbox.create()
-
+var fancyLog = require('fancy-log')
+var PluginError = require('plugin-error')
+var Vinyl = require('vinyl')
 
 describe('gulp-svgstore usage test', function () {
 
@@ -79,7 +80,7 @@ describe('gulp-svgstore usage test', function () {
 describe('gulp-svgstore unit test', function () {
 
   beforeEach(function () {
-    sandbox.stub(gutil, 'log')
+    sandbox.stub(fancyLog, 'info')
   })
 
   afterEach(function () {
@@ -119,12 +120,12 @@ describe('gulp-svgstore unit test', function () {
       done()
     })
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       contents: new Buffer('<svg viewBox="0 0 4 4" preserveAspectRatio="xMinYMid meet"><circle cx="2" cy="2" r="1"/></svg>')
     , path: 'circle.svg'
     }))
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       contents: new Buffer('<svg><rect x="1" y="1" width="2" height="2"/></svg>')
     , path: 'square.svg'
     }))
@@ -147,17 +148,17 @@ describe('gulp-svgstore unit test', function () {
       done()
     })
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       contents: new Buffer('<svg viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></svg>')
     , path: 'circle.svg'
     }))
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       contents: null
     , path: 'square.svg'
     }))
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       contents: new Buffer('not an svg')
     , path: 'square.svg'
     }))
@@ -181,7 +182,7 @@ describe('gulp-svgstore unit test', function () {
       done()
     })
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       contents: new Buffer(
         '<svg viewBox="0 0 4 4">' +
         '<defs><circle id="circ" cx="2" cy="2" r="1"/></svg></defs>' +
@@ -200,13 +201,13 @@ describe('gulp-svgstore unit test', function () {
       var stream = svgstore()
 
       stream.on('error', function (error) {
-        assert.ok(error instanceof gutil.PluginError)
+        assert.ok(error instanceof PluginError)
         assert.equal(error.message, 'File name should be unique: circle')
         done()
       })
 
-      stream.write(new gutil.File({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
-      stream.write(new gutil.File({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
+      stream.write(new Vinyl({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
+      stream.write(new Vinyl({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
 
       stream.end()
 
@@ -221,13 +222,13 @@ describe('gulp-svgstore unit test', function () {
         done()
       })
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer('<svg/>')
       , path: 'src/icons/circle.svg'
       , base: 'src/icons'
       }))
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer('<svg/>')
       , path: 'src2/icons2/square.svg'
       , base: 'src2/icons2'
@@ -246,13 +247,13 @@ describe('gulp-svgstore unit test', function () {
         done()
       })
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer('<svg/>')
       , path: 'circle.svg'
       , base: '.'
       }))
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer('<svg/>')
       , path: 'src2/icons2/square.svg'
       , base: 'src2'
@@ -274,7 +275,7 @@ describe('gulp-svgstore unit test', function () {
         done()
       })
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg">' +
             '<rect width="1" height="1"/>' +
@@ -282,7 +283,7 @@ describe('gulp-svgstore unit test', function () {
       , path: 'rect.svg'
       }))
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
               'viewBox="0 0 50 50">' +
@@ -310,14 +311,14 @@ describe('gulp-svgstore unit test', function () {
         done()
       })
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
         )
       , path: 'rect.svg'
       }))
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
         )
@@ -334,16 +335,14 @@ describe('gulp-svgstore unit test', function () {
 
       stream.on('data', function () {
         assert.equal(
-          gutil.colors.yellow(
-            'Same namespace value under different names : xmlns:lk and xmlns:xlink.\n' +
-            'Keeping both.'
-          ),
-          gutil.log.getCall(0).args[0]
+          'Same namespace value under different names : xmlns:lk and xmlns:xlink.\n' +
+          'Keeping both.',
+          fancyLog.info.getCall(0).args[0]
         )
         done()
       })
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:lk="http://www.w3.org/1999/xlink">' +
             '<rect id="a" width="1" height="1"/>' +
@@ -352,7 +351,7 @@ describe('gulp-svgstore unit test', function () {
       , path: 'rect.svg'
       }))
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
               'viewBox="0 0 50 50">' +
@@ -373,17 +372,15 @@ describe('gulp-svgstore unit test', function () {
 
       stream.on('data', function () {
         assert.equal(
-          gutil.colors.red(
-            'xmlns:xlink namespace appeared multiple times with different value. ' +
-            'Keeping the first one : "http://www.w3.org/1998/xlink".\n' +
-            'Each namespace must be unique across files.'
-          ),
-          gutil.log.getCall(0).args[0]
+          'xmlns:xlink namespace appeared multiple times with different value. ' +
+          'Keeping the first one : "http://www.w3.org/1998/xlink".\n' +
+          'Each namespace must be unique across files.',
+          fancyLog.info.getCall(0).args[0]
         )
         done()
       })
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1998/xlink">' +
             '<rect id="a" width="1" height="1"/>' +
@@ -392,7 +389,7 @@ describe('gulp-svgstore unit test', function () {
       , path: 'rect.svg'
       }))
 
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         contents: new Buffer(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
               'viewBox="0 0 50 50">' +
