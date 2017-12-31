@@ -3,7 +3,7 @@
 var username = process.env.SAUCE_USERNAME || 'SAUCE_USERNAME'
 var accessKey = process.env.SAUCE_ACCESS_KEY || 'SAUCE_ACCESS_KEY'
 var tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER
-var port = process.env.PORT || 8888
+var port = process.env.PORT || null
 var wd = require('wd')
 var assert = require('assert')
 var Q = wd.Q
@@ -37,9 +37,17 @@ describe('gulp-svgstore usage test', function () {
       , 'tunnel-identifier': tunnelIdentifier
       }),
       Q.Promise(function (resolve) {
-        server.listen(process.env.PORT || 8888, function () {
-          resolve()
-        })
+        if (port) {
+          server.listen(port, function () {
+            resolve()
+          })
+        } else {
+          server.listen(function () {
+            port = server.address().port
+            resolve()
+          })
+        }
+
       })
     ])
   })
