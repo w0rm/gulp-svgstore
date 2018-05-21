@@ -20,9 +20,10 @@ The following options are set automatically based on file data:
 
 If your workflow is different, please use `gulp-rename` to rename sources or result.
 
-The only available option is:
+The only available options are:
 
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: `false`.
+* idPrefix — adds a prefix before all ids. eg: `idPrefix: 'foo'` would yield `<symbol id="foo--rect"/>` on a `rect.svg`
 
 
 ## Install

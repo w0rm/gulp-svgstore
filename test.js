@@ -411,4 +411,35 @@ describe('gulp-svgstore unit test', function () {
       stream.end()
   })
 
+  it('should allow an id prefix option to be passed in and applied', function (done) {
+
+      var stream = svgstore({ inlineSvg: true, idPrefix: 'foo--' })
+
+      stream.on('data', function (file) {
+        assert.equal(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+          '<symbol id="foo--rect"/><symbol id="foo--sandwich"/></svg>',
+          file.contents.toString()
+        )
+        done()
+      })
+
+      stream.write(new Vinyl({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
+        )
+      , path: 'rect.svg'
+      }))
+
+      stream.write(new Vinyl({
+        contents: new Buffer(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
+        )
+      , path: 'sandwich.svg'
+      }))
+
+      stream.end()
+
+  })
+
 })

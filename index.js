@@ -13,6 +13,7 @@ module.exports = function (config) {
   var isEmpty = true
   var fileName
   var inlineSvg = config.inlineSvg || false
+  var idPrefix = config.idPrefix || ''
   var ids = {}
 
   var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg"><defs/></svg>'
@@ -66,7 +67,7 @@ module.exports = function (config) {
       isEmpty = false
     }
 
-    $symbol.attr('id', idAttr)
+    $symbol.attr('id', idPrefix + idAttr)
     if (viewBoxAttr) {
       $symbol.attr('viewBox', viewBoxAttr)
     }
