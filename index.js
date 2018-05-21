@@ -67,7 +67,7 @@ module.exports = function (config) {
       isEmpty = false
     }
 
-    $symbol.attr('id', `${idPrefix}${idAttr}`)
+    $symbol.attr('id', idPrefix + idAttr)
     if (viewBoxAttr) {
       $symbol.attr('viewBox', viewBoxAttr)
     }
