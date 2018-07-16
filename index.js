@@ -11,7 +11,7 @@ module.exports = function (config) {
 
   var namespaces = {}
   var isEmpty = true
-  var fileName = config.fileName || false
+  var fileName = typeof config.fileName === 'string' ? config.fileName.replace(/\.svg$/, '') : false
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
