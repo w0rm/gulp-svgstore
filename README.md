@@ -20,8 +20,9 @@ The following options are set automatically based on file data:
 
 If your workflow is different, please use `gulp-rename` to rename sources or result.
 
-The only available option is:
+The following properties can be configured using the `config` argument:
 
+* fileName - Overwrite the svg sprite's file name, default: name of the source's base directory.
 * inlineSvg — output only `<svg>` element without `<?xml ?>` and `DOCTYPE` to use inline, default: `false`.
 
 
