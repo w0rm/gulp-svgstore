@@ -37,6 +37,10 @@ module.exports = function (config) {
 
     if (file.isNull()) return cb()
 
+    if (path.extname(file.relative) !== '.svg') {
+      this.push(file);
+      return cb();
+    }
 
     var $svg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
 
