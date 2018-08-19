@@ -1,4 +1,4 @@
-gulp-svgstore [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)](https://travis-ci.org/w0rm/gulp-svgstore)
+gulp-svgstore [![Build Status](https://travis-ci.org/w0rm/gulp-svgstore.svg?branch=master)](https://travis-ci.org/w0rm/gulp-svgstore)
 =============
 
 <img align="right" width="130" height="175"
