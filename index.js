@@ -124,7 +124,7 @@ module.exports = function (config) {
     for (var nsName in namespaces) {
       $combinedSvg.attr(nsName, namespaces[nsName])
     }
-    var file = new Vinyl({ path: fileName, contents: new Buffer($.xml()) })
+    var file = new Vinyl({ path: fileName, contents: Buffer.from($.xml()) })
     this.push(file)
     cb()
   }

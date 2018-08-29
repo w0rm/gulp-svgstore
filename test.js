@@ -129,12 +129,12 @@ describe('gulp-svgstore unit test', function () {
     })
 
     stream.write(new Vinyl({
-      contents: new Buffer('<svg viewBox="0 0 4 4" preserveAspectRatio="xMinYMid meet"><circle cx="2" cy="2" r="1"/></svg>')
+      contents: Buffer.from('<svg viewBox="0 0 4 4" preserveAspectRatio="xMinYMid meet"><circle cx="2" cy="2" r="1"/></svg>')
     , path: 'circle.svg'
     }))
 
     stream.write(new Vinyl({
-      contents: new Buffer('<svg><rect x="1" y="1" width="2" height="2"/></svg>')
+      contents: Buffer.from('<svg><rect x="1" y="1" width="2" height="2"/></svg>')
     , path: 'square.svg'
     }))
 
@@ -157,7 +157,7 @@ describe('gulp-svgstore unit test', function () {
     })
 
     stream.write(new Vinyl({
-      contents: new Buffer('<svg viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></svg>')
+      contents: Buffer.from('<svg viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></svg>')
     , path: 'circle.svg'
     }))
 
@@ -167,7 +167,7 @@ describe('gulp-svgstore unit test', function () {
     }))
 
     stream.write(new Vinyl({
-      contents: new Buffer('not an svg')
+      contents: Buffer.from('not an svg')
     , path: 'square.svg'
     }))
 
@@ -191,7 +191,7 @@ describe('gulp-svgstore unit test', function () {
     })
 
     stream.write(new Vinyl({
-      contents: new Buffer(
+      contents: Buffer.from(
         '<svg viewBox="0 0 4 4">' +
         '<defs><circle id="circ" cx="2" cy="2" r="1"/></svg></defs>' +
         '<circle cx="2" cy="2" r="1"/>' +
@@ -214,8 +214,8 @@ describe('gulp-svgstore unit test', function () {
         done()
       })
 
-      stream.write(new Vinyl({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
-      stream.write(new Vinyl({ contents: new Buffer('<svg></svg>'), path: 'circle.svg' }))
+      stream.write(new Vinyl({ contents: Buffer.from('<svg></svg>'), path: 'circle.svg' }))
+      stream.write(new Vinyl({ contents: Buffer.from('<svg></svg>'), path: 'circle.svg' }))
 
       stream.end()
 
@@ -231,13 +231,13 @@ describe('gulp-svgstore unit test', function () {
       })
 
       stream.write(new Vinyl({
-        contents: new Buffer('<svg/>')
+        contents: Buffer.from('<svg/>')
       , path: 'src/icons/circle.svg'
       , base: 'src/icons'
       }))
 
       stream.write(new Vinyl({
-        contents: new Buffer('<svg/>')
+        contents: Buffer.from('<svg/>')
       , path: 'src2/icons2/square.svg'
       , base: 'src2/icons2'
       }))
@@ -256,13 +256,13 @@ describe('gulp-svgstore unit test', function () {
       })
 
       stream.write(new Vinyl({
-        contents: new Buffer('<svg/>')
+        contents: Buffer.from('<svg/>')
       , path: 'circle.svg'
       , base: '.'
       }))
 
       stream.write(new Vinyl({
-        contents: new Buffer('<svg/>')
+        contents: Buffer.from('<svg/>')
       , path: 'src2/icons2/square.svg'
       , base: 'src2'
       }))
@@ -284,7 +284,7 @@ describe('gulp-svgstore unit test', function () {
       })
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg">' +
             '<rect width="1" height="1"/>' +
           '</svg>')
@@ -292,7 +292,7 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
               'viewBox="0 0 50 50">' +
             '<rect id="a" width="50" height="10"/>' +
@@ -320,14 +320,14 @@ describe('gulp-svgstore unit test', function () {
       })
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
         )
       , path: 'rect.svg'
       }))
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"/>'
         )
       , path: 'sandwich.svg'
@@ -351,7 +351,7 @@ describe('gulp-svgstore unit test', function () {
       })
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:lk="http://www.w3.org/1999/xlink">' +
             '<rect id="a" width="1" height="1"/>' +
             '<use y="2" lk:href="#a"/>' +
@@ -360,7 +360,7 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
               'viewBox="0 0 50 50">' +
             '<rect id="a" width="50" height="10"/>' +
@@ -389,7 +389,7 @@ describe('gulp-svgstore unit test', function () {
       })
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1998/xlink">' +
             '<rect id="a" width="1" height="1"/>' +
             '<use y="2" xlink:href="#a"/>' +
@@ -398,7 +398,7 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.write(new Vinyl({
-        contents: new Buffer(
+        contents: Buffer.from(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
               'viewBox="0 0 50 50">' +
             '<rect id="a" width="50" height="10"/>' +

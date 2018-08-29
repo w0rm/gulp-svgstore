@@ -37,6 +37,8 @@
     "sinon": "^1.16.1",
     "wd": "^0.4.0"
   },
+  "engines" : { "node" : ">=4.0" },
+  "engineStrict": true,
   "keywords": [
     "gulpplugin",
     "svg",

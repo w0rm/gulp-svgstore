@@ -238,7 +238,7 @@ gulp.task('metadata', function () {
             }).get();
             var jsonFile = new Vinyl({
                 path: 'metadata.json',
-                contents: new Buffer(JSON.stringify(data))
+                contents: Buffer.from(JSON.stringify(data))
             });
             this.push(jsonFile);
             this.push(file);
@@ -285,6 +285,10 @@ Or you can go further and reduce the size by removing the `<use>` element, like 
 ```
 
 ## Changelog
+
+* 7.0.0
+  * Stop using deprecated `new Buffer()` api
+  * Drop support for node 0.12
 
 * 6.1.1
   * Removed dependency on gulp-util to support gulp 4
