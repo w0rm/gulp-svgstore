@@ -15,7 +15,7 @@ module.exports = function (config) {
   var inlineSvg = config.inlineSvg || false
   var ids = {}
 
-  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg"><defs/></svg>'
+  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs/></svg>'
   if (!inlineSvg) {
     resultSvg =
       '<?xml version="1.0" encoding="UTF-8"?>' +
