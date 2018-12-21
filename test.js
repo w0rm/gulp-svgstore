@@ -120,7 +120,7 @@ describe('gulp-svgstore unit test', function () {
     stream.on('data', function (file) {
       var result = file.contents.toString()
       var target =
-      '<svg xmlns="http://www.w3.org/2000/svg">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
       '<symbol id="circle" viewBox="0 0 4 4" preserveAspectRatio="xMinYMid meet"><circle cx="2" cy="2" r="1"/></symbol>' +
       '<symbol id="square"><rect x="1" y="1" width="2" height="2"/></symbol>' +
       '</svg>'
@@ -149,7 +149,7 @@ describe('gulp-svgstore unit test', function () {
     stream.on('data', function (file) {
       var result = file.contents.toString()
       var target =
-      '<svg xmlns="http://www.w3.org/2000/svg">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
       '<symbol id="circle" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></symbol>' +
       '</svg>'
       assert.equal( result, target )
@@ -182,7 +182,7 @@ describe('gulp-svgstore unit test', function () {
     stream.on('data', function(file){
       var result = file.contents.toString()
       var target =
-        '<svg xmlns="http://www.w3.org/2000/svg">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
         '<defs><circle id="circ" cx="2" cy="2" r="1"/></defs>' +
         '<symbol id="circle" viewBox="0 0 4 4"/>' +
         '</svg>'
