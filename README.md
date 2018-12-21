@@ -286,6 +286,9 @@ Or you can go further and reduce the size by removing the `<use>` element, like 
 
 ## Changelog
 
+* 7.0.1
+  * Include xmlns:xlink in svg definition #96
+
 * 7.0.0
   * Stop using deprecated `new Buffer()` api
   * Drop support for node 0.12
