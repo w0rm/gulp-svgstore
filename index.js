@@ -107,6 +107,24 @@ module.exports = function (config) {
 
     var $defs = $svg.find('defs')
     if ($defs.length > 0) {
+      $defs.contents().each(function makeDefIdUnique(index, def) {
+        var $def = $(def);
+        var defId = $def.attr('id');
+        var uniqueDefId = idAttr + '-' + defId;
+
+        $def.attr('id', uniqueDefId);
+
+        $svg.find('use').each(function replaceUseHref(id, use) {
+          var $use = $(use);
+
+          ['href', 'xlink:href'].forEach(function(attributeName) {
+            if($use.attr(attributeName) === '#' + defId) {
+                $use.attr(attributeName, '#' + uniqueDefId);
+            }
+          });
+        });
+      });
+
       $combinedDefs.append($defs.contents())
       $defs.remove()
     }
