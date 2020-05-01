@@ -250,7 +250,7 @@ gulp.task('metadata', function () {
 
 ## Possible rendering issues with Clipping Paths in SVG
 
-If you're running into issues with SVGs not rendering correctly in some browsers (see issue #47), the issue might be that clipping paths might not have been properly intersected in the SVG file. There are currently two ways of fixing this issue:
+If you're running into issues with SVGs not rendering correctly in some browsers (see issue #47), the issue might be that clipping paths might not have been properly intersected in the SVG file. There are currently three ways of fixing this issue:
 
 ### Correcting the Clipping Path in the SVG
 
@@ -283,6 +283,11 @@ Or you can go further and reduce the size by removing the `<use>` element, like 
     <clipPath id="b"><path d="M28.4 30.5l5.3 5c0-.1 7-6.9 7-6.9l-4-6.8-8.3 8.7z"/></clipPath>
 </defs>
 ```
+
+### Using gulp-cheerio to automate this
+
+Another possible solution would be to write a transformation with [gulp-cheerio](https://github.com/KenPowers/gulp-cheerio). Check this issue https://github.com/w0rm/gulp-svgstore/issues/98 for the instructions.
+
 
 ## Changelog
 
