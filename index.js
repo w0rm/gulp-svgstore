@@ -1,21 +1,21 @@
-var cheerio = require('cheerio')
-var path = require('path')
-var Stream = require('stream')
-var fancyLog = require('fancy-log')
-var PluginError = require('plugin-error')
-var Vinyl = require('vinyl')
+const cheerio = require('cheerio')
+const path = require('path')
+const Stream = require('stream')
+const fancyLog = require('fancy-log')
+const PluginError = require('plugin-error')
+const Vinyl = require('vinyl')
 
 module.exports = function (config) {
 
   config = config || {}
 
-  var namespaces = {}
-  var isEmpty = true
-  var fileName
-  var inlineSvg = config.inlineSvg || false
-  var ids = {}
+  const namespaces = {}
+  let isEmpty = true
+  let fileName
+  const inlineSvg = config.inlineSvg || false
+  const ids = {}
 
-  var resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs/></svg>'
+  let resultSvg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs/></svg>'
   if (!inlineSvg) {
     resultSvg =
       '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -24,12 +24,12 @@ module.exports = function (config) {
       resultSvg
   }
 
-  var $ = cheerio.load(resultSvg, { xmlMode: true })
-  var $combinedSvg = $('svg')
-  var $combinedDefs = $('defs')
-  var stream = new Stream.Transform({ objectMode: true })
+  const $ = cheerio.load(resultSvg, { xmlMode: true })
+  const $combinedSvg = $('svg')
+  const $combinedDefs = $('defs')
+  const stream = new Stream.Transform({ objectMode: true })
 
-  stream._transform = function transform (file, encoding, cb) {
+  stream._transform = function transform (file, _, cb) {
 
     if (file.isStream()) {
       return cb(new PluginError('gulp-svgstore', 'Streams are not supported!'))
@@ -38,14 +38,14 @@ module.exports = function (config) {
     if (file.isNull()) return cb()
 
 
-    var $svg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
+    const $svg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
 
     if ($svg.length === 0) return cb()
 
-    var idAttr = path.basename(file.relative, path.extname(file.relative))
-    var viewBoxAttr = $svg.attr('viewBox')
-    var preserveAspectRatioAttr = $svg.attr('preserveAspectRatio')
-    var $symbol = $('<symbol/>')
+    const idAttr = path.basename(file.relative, path.extname(file.relative))
+    const viewBoxAttr = $svg.attr('viewBox')
+    const preserveAspectRatioAttr = $svg.attr('preserveAspectRatio')
+    const $symbol = $('<symbol/>')
 
     if (idAttr in ids) {
       return cb(new PluginError('gulp-svgstore', 'File name should be unique: ' + idAttr))
@@ -74,11 +74,11 @@ module.exports = function (config) {
       $symbol.attr('preserveAspectRatio', preserveAspectRatioAttr)
     }
 
-    var attrs = $svg[0].attribs
-    for (var attrName in attrs) {
+    const attrs = $svg[0].attribs
+    for (let attrName in attrs) {
       if (attrName.match(/xmlns:.+/)) {
-        var storedNs = namespaces[attrName]
-        var attrNs = attrs[attrName]
+        const storedNs = namespaces[attrName]
+        const attrNs = attrs[attrName]
 
         if (storedNs !== undefined) {
           if (storedNs !== attrNs) {
@@ -89,7 +89,7 @@ module.exports = function (config) {
             )
           }
         } else {
-          for (var nsName in namespaces) {
+          for (let nsName in namespaces) {
             if (namespaces[nsName] === attrNs) {
               fancyLog.info(
                 'Same namespace value under different names : ' +
@@ -105,7 +105,7 @@ module.exports = function (config) {
       }
     }
 
-    var $defs = $svg.find('defs')
+    const $defs = $svg.find('defs')
     if ($defs.length > 0) {
       $combinedDefs.append($defs.contents())
       $defs.remove()
@@ -121,10 +121,10 @@ module.exports = function (config) {
     if ($combinedDefs.contents().length === 0) {
       $combinedDefs.remove()
     }
-    for (var nsName in namespaces) {
+    for (let nsName in namespaces) {
       $combinedSvg.attr(nsName, namespaces[nsName])
     }
-    var file = new Vinyl({ path: fileName, contents: Buffer.from($.xml()) })
+    const file = new Vinyl({ path: fileName, contents: Buffer.from($.xml()) })
     this.push(file)
     cb()
   }

@@ -1,5 +1,6 @@
-gulp-svgstore [![Build Status](https://travis-ci.org/w0rm/gulp-svgstore.svg?branch=master)](https://travis-ci.org/w0rm/gulp-svgstore)
+gulp-svgstore ![Build Status](https://github.com/w0rm/gulp-svgstore/actions/workflows/test.yml/badge.svg?branch=main)
 =============
+
 
 <img align="right" width="130" height="175"
      title="SVG Superman"
@@ -40,16 +41,16 @@ Additionally pass through [gulp-svgmin](https://github.com/ben-eb/gulp-svgmin)
 to minify svg and ensure unique ids.
 
 ```js
-var gulp = require('gulp');
-var svgstore = require('gulp-svgstore');
-var svgmin = require('gulp-svgmin');
-var path = require('path');
+const gulp = require('gulp');
+const svgstore = require('gulp-svgstore');
+const svgmin = require('gulp-svgmin');
+const path = require('path');
 
-gulp.task('svgstore', function () {
+gulp.task('svgstore', () => {
     return gulp
         .src('test/src/*.svg')
-        .pipe(svgmin(function (file) {
-            var prefix = path.basename(file.relative, path.extname(file.relative));
+        .pipe(svgmin((file) => {
+            const prefix = path.basename(file.relative, path.extname(file.relative));
             return {
                 plugins: [{
                     cleanupIDs: {
@@ -79,12 +80,12 @@ In your html file (using [`sr-only` from html5-boilerplate](https://github.com/h
 In your gulp tasks:
 
 ```js
-var gulp = require('gulp');
-var svgstore = require('gulp-svgstore');
-var inject = require('gulp-inject');
+const gulp = require('gulp');
+const svgstore = require('gulp-svgstore');
+const inject = require('gulp-inject');
 
-gulp.task('svgstore', function () {
-    var svgs = gulp
+gulp.task('svgstore', () => {
+    const svgs = gulp
         .src('test/src/*.svg')
         .pipe(svgstore({ inlineSvg: true }));
 
@@ -107,11 +108,11 @@ because id should be unique.
 If you need to add prefix to each id, please use `gulp-rename`:
 
 ```js
-var gulp = require('gulp');
-var rename = require('gulp-rename');
-var svgstore = require('gulp-svgstore');
+const gulp = require('gulp');
+const rename = require('gulp-rename');
+const svgstore = require('gulp-svgstore');
 
-gulp.task('default', function () {
+gulp.task('default', () => {
     return gulp
         .src('src/svg/**/*.svg', { base: 'src/svg' })
         .pipe(rename({prefix: 'icon-'}))
@@ -126,16 +127,16 @@ e.g. `src/svg/one/two/three/circle.svg` becomes `one-two-three-circle`.
 
 
 ```js
-var gulp = require('gulp');
-var path = require('path');
-var rename = require('gulp-rename');
-var svgstore = require('gulp-svgstore');
+const gulp = require('gulp');
+const path = require('path');
+const rename = require('gulp-rename');
+const svgstore = require('gulp-svgstore');
 
-gulp.task('default', function () {
+gulp.task('default', () => {
     return gulp
         .src('src/svg/**/*.svg', { base: 'src/svg' })
-        .pipe(rename(function (file) {
-            var name = file.dirname.split(path.sep);
+        .pipe(rename((file) => {
+            const name = file.dirname.split(path.sep);
             name.push(file.basename);
             file.basename = name.join('-');
         }))
@@ -167,15 +168,15 @@ An example below removes all fill attributes from svg sources before combining t
 Please note that you have to set `xmlMode: true` to parse svgs as xml file.
 
 ```js
-var gulp = require('gulp');
-var svgstore = require('gulp-svgstore');
-var cheerio = require('gulp-cheerio');
+const gulp = require('gulp');
+const svgstore = require('gulp-svgstore');
+const cheerio = require('gulp-cheerio');
 
-gulp.task('svgstore', function () {
+gulp.task('svgstore', () => {
     return gulp
         .src('test/src/*.svg')
         .pipe(cheerio({
-            run: function ($) {
+            run: ($) => {
                 $('[fill]').removeAttr('fill');
             },
             parserOptions: { xmlMode: true }
@@ -193,17 +194,17 @@ nothing, best method is to use the [method show above](#inlining-svgstore-result
 
 
 ```js
-var gulp = require('gulp');
-var svgstore = require('gulp-svgstore');
-var cheerio = require('gulp-cheerio');
+const gulp = require('gulp');
+const svgstore = require('gulp-svgstore');
+const cheerio = require('gulp-cheerio');
 
-gulp.task('svgstore', function () {
+gulp.task('svgstore', () => {
     return gulp
         .src('test/src/*.svg')
         .pipe(svgstore({ inlineSvg: true }))
         .pipe(cheerio({
-            run: function ($) {
-                $('svg').attr('style',  'display:none');
+            run: ($) => {
+                $('svg').attr('style', 'display:none');
             },
             parserOptions: { xmlMode: true }
         }))
@@ -218,25 +219,25 @@ You can extract data with cheerio.
 The following example extracts viewBox and id from each symbol in combined svg.
 
 ```js
-var gulp = require('gulp');
-var Vinyl = require('vinyl');
-var svgstore = require('gulp-svgstore');
-var through2 = require('through2');
-var cheerio = require('cheerio');
+const gulp = require('gulp');
+const Vinyl = require('vinyl');
+const svgstore = require('gulp-svgstore');
+const through2 = require('through2');
+const cheerio = require('cheerio');
 
-gulp.task('metadata', function () {
+gulp.task('metadata', () => {
     return gulp
         .src('test/src/*.svg')
         .pipe(svgstore())
         .pipe(through2.obj(function (file, encoding, cb) {
-            var $ = cheerio.load(file.contents.toString(), {xmlMode: true});
-            var data = $('svg > symbol').map(function () {
+            const $ = cheerio.load(file.contents.toString(), {xmlMode: true});
+            const data = $('svg > symbol').map(() => {
                 return {
                     name: $(this).attr('id'),
                     viewBox: $(this).attr('viewBox')
                 };
             }).get();
-            var jsonFile = new Vinyl({
+            const jsonFile = new Vinyl({
                 path: 'metadata.json',
                 contents: Buffer.from(JSON.stringify(data))
             });
@@ -290,6 +291,10 @@ Another possible solution would be to write a transformation with [gulp-cheerio]
 
 
 ## Changelog
+
+* 8.0.0
+  * Update dependencies
+  * Drop support for node < 10
 
 * 7.0.1
   * Include xmlns:xlink in svg definition #96
