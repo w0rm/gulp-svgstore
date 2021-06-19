@@ -1,130 +1,95 @@
 /* global describe, it, before, after, beforeEach, afterEach */
 
-var username = process.env.SAUCE_USERNAME || 'SAUCE_USERNAME'
-var accessKey = process.env.SAUCE_ACCESS_KEY || 'SAUCE_ACCESS_KEY'
-var tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER
-var port = process.env.PORT || null
-var wd = require('wd')
-var assert = require('assert')
-var Q = wd.Q
-var svgstore = require('./index')
-var cheerio = require('cheerio')
-var sinon = require('sinon')
-var finalhandler = require('finalhandler')
-var serveStatic = require('serve-static')
-var http = require('http')
-var sandbox = sinon.sandbox.create()
-var fancyLog = require('fancy-log')
-var PluginError = require('plugin-error')
-var Vinyl = require('vinyl')
+const assert = require('assert')
+const cheerio = require('cheerio')
+const fancyLog = require('fancy-log')
+const finalhandler = require('finalhandler')
+const http = require('http')
+const PluginError = require('plugin-error')
+const puppeteer = require('puppeteer')
+const sandbox = require('sinon').createSandbox()
+const serveStatic = require('serve-static')
+const svgstore = require('./index')
+const Vinyl = require('vinyl')
 
-describe('gulp-svgstore usage test', function () {
+describe('gulp-svgstore usage test', () => {
+  let browser
+  let port
+  let page
 
-  this.timeout(10 * 1000)
-
-  var browser
-  var serve = serveStatic('test')
-  var server = http.createServer(function(req, res){
-    var done = finalhandler(req, res)
-    serve(req, res, done)
+  const server = http.createServer((req, res) => {
+    serveStatic('test')(req, res, finalhandler(req, res))
   })
 
-  before(function () {
-    browser = wd.promiseChainRemote('ondemand.saucelabs.com', 80, username, accessKey)
-    return Q.all([
-      browser.init({
-        browserName: 'chrome'
-      , 'tunnel-identifier': tunnelIdentifier
-      }),
-      Q.Promise(function (resolve) {
-        if (port) {
-          server.listen(port, function () {
-            resolve()
-          })
-        } else {
-          server.listen(function () {
-            port = server.address().port
-            resolve()
-          })
-        }
-
-      })
-    ])
-  })
-
-  after(function () {
-    return Q.all([
-      browser.quit().then(function(){}),
-      Q.Promise(function (resolve) {
-        server.close()
-        server.unref()
+  before(() => Promise.all([
+    puppeteer.launch()
+      .then((b) => { browser = b })
+      .then(() => browser.newPage())
+      .then((p) => { page = p })
+  , new Promise((resolve) => {
+      server.listen(() => {
+        port = server.address().port
         resolve()
       })
-    ])
-  })
+    })
+  ]))
 
-  it('stored image should equal original svg', function () {
-    var screenshot1
-    return browser
-      .get('http://localhost:' + port + '/inline-svg.html')
-      .title()
-      .then(function (title) {
-        assert.equal(title, 'gulp-svgstore', 'Test page is not loaded')
+  after(() => Promise.all([
+    browser.close()
+  , new Promise((resolve) => {
+      server.close()
+      server.unref()
+      resolve()
+    })
+  ]))
+
+  it('stored image should equal original svg', () => {
+    let screenshot1
+
+    return page.goto('http://localhost:' + port + '/inline-svg.html')
+      .then(() => page.evaluate(() => document.title))
+      .then((title) => {
+        assert.strictEqual(title, 'gulp-svgstore', 'Test page is not loaded')
       })
-      .takeScreenshot()
-      .then(function (data) {
-        screenshot1 = data
-      })
-      .get('http://localhost:' + port + '/dest/inline-svg.html')
-      .takeScreenshot()
-      .then(function (screenshot2) {
+      .then(() => page.screenshot())
+      .then((data) => { screenshot1 = data })
+      .then(() => page.goto('http://localhost:' + port + '/dest/inline-svg.html'))
+      .then(() => page.screenshot())
+      .then((screenshot2) => {
         assert(screenshot1.toString() === screenshot2.toString(), 'Screenshots are different')
       })
   })
-
 })
 
+describe('gulp-svgstore unit test', () => {
+  beforeEach(() => { sandbox.stub(fancyLog, 'info') })
+  afterEach(() => { sandbox.restore() })
 
-describe('gulp-svgstore unit test', function () {
+  it('should not create empty svg file', (done) => {
+    const stream = svgstore()
+    let isEmpty = true
 
-  beforeEach(function () {
-    sandbox.stub(fancyLog, 'info')
-  })
+    stream.on('data', () => { isEmpty = false })
 
-  afterEach(function () {
-    sandbox.restore()
-  })
-
-  it('should not create empty svg file', function (done) {
-
-    var stream = svgstore()
-    var isEmpty = true
-
-    stream.on('data', function () {
-      isEmpty = false
-    })
-
-    stream.on('end', function () {
+    stream.on('end', () => {
       assert.ok(isEmpty, 'Created empty svg')
       done()
     })
 
     stream.end()
-
   })
 
-  it('should correctly merge svg files', function (done) {
+  it('should correctly merge svg files', (done) => {
+    const stream = svgstore({ inlineSvg: true })
 
-    var stream = svgstore({ inlineSvg: true })
-
-    stream.on('data', function (file) {
-      var result = file.contents.toString()
-      var target =
-      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
-      '<symbol id="circle" viewBox="0 0 4 4" preserveAspectRatio="xMinYMid meet"><circle cx="2" cy="2" r="1"/></symbol>' +
-      '<symbol id="square"><rect x="1" y="1" width="2" height="2"/></symbol>' +
-      '</svg>'
-      assert.equal( result, target )
+    stream.on('data', (file) => {
+      const result = file.contents.toString()
+      const target =
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+          '<symbol id="circle" viewBox="0 0 4 4" preserveAspectRatio="xMinYMid meet"><circle cx="2" cy="2" r="1"/></symbol>' +
+          '<symbol id="square"><rect x="1" y="1" width="2" height="2"/></symbol>' +
+        '</svg>'
+      assert.strictEqual(result, target)
       done()
     })
 
@@ -139,20 +104,18 @@ describe('gulp-svgstore unit test', function () {
     }))
 
     stream.end()
-
   })
 
-  it('should not include null or invalid files', function (done) {
+  it('should not include null or invalid files', (done) => {
+    const stream = svgstore({ inlineSvg: true })
 
-    var stream = svgstore({ inlineSvg: true })
-
-    stream.on('data', function (file) {
-      var result = file.contents.toString()
-      var target =
-      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
-      '<symbol id="circle" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></symbol>' +
-      '</svg>'
-      assert.equal( result, target )
+    stream.on('data', (file) => {
+      const result = file.contents.toString()
+      const target =
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+          '<symbol id="circle" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1"/></symbol>' +
+        '</svg>'
+      assert.strictEqual(result, target)
       done()
     })
 
@@ -172,21 +135,19 @@ describe('gulp-svgstore unit test', function () {
     }))
 
     stream.end()
-
   })
 
-  it('should merge defs to parent svg file', function (done) {
+  it('should merge defs to parent svg file', (done) => {
+    const stream = svgstore({ inlineSvg: true })
 
-    var stream = svgstore({ inlineSvg: true })
-
-    stream.on('data', function(file){
-      var result = file.contents.toString()
-      var target =
+    stream.on('data', (file) => {
+      const result = file.contents.toString()
+      const target =
         '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
-        '<defs><circle id="circ" cx="2" cy="2" r="1"/></defs>' +
-        '<symbol id="circle" viewBox="0 0 4 4"/>' +
+          '<defs><circle id="circ" cx="2" cy="2" r="1"/></defs>' +
+          '<symbol id="circle" viewBox="0 0 4 4"/>' +
         '</svg>'
-      assert.equal( result, target )
+      assert.strictEqual(result, target)
       done()
     })
 
@@ -201,16 +162,14 @@ describe('gulp-svgstore unit test', function () {
     }))
 
     stream.end()
-
   })
 
-  it('should emit error if files have the same name', function (done) {
+  it('should emit error if files have the same name', (done) => {
+      const stream = svgstore()
 
-      var stream = svgstore()
-
-      stream.on('error', function (error) {
+      stream.on('error', (error) => {
         assert.ok(error instanceof PluginError)
-        assert.equal(error.message, 'File name should be unique: circle')
+        assert.strictEqual(error.message, 'File name should be unique: circle')
         done()
       })
 
@@ -218,15 +177,13 @@ describe('gulp-svgstore unit test', function () {
       stream.write(new Vinyl({ contents: Buffer.from('<svg></svg>'), path: 'circle.svg' }))
 
       stream.end()
-
   })
 
-  it('should generate result filename based on base path of the first file', function (done) {
+  it('should generate result filename based on base path of the first file', (done) => {
+      const stream = svgstore()
 
-      var stream = svgstore()
-
-      stream.on('data', function (file) {
-        assert.equal(file.relative, 'icons.svg')
+      stream.on('data', (file) => {
+        assert.strictEqual(file.relative, 'icons.svg')
         done()
       })
 
@@ -243,15 +200,13 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.end()
-
   })
 
-  it('should generate svgstore.svg if base path of the 1st file is dot', function (done) {
+  it('should generate svgstore.svg if base path of the 1st file is dot', (done) => {
+      const stream = svgstore()
 
-      var stream = svgstore()
-
-      stream.on('data', function (file) {
-        assert.equal(file.relative, 'svgstore.svg')
+      stream.on('data', (file) => {
+        assert.strictEqual(file.relative, 'svgstore.svg')
         done()
       })
 
@@ -268,18 +223,16 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.end()
-
   })
 
-  it('should include all namespace into final svg', function (done) {
+  it('should include all namespace into final svg', (done) => {
+      const stream = svgstore()
 
-      var stream = svgstore()
+      stream.on('data', (file) => {
+        const $resultSvg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
 
-      stream.on('data', function (file) {
-        var $resultSvg = cheerio.load(file.contents.toString(), { xmlMode: true })('svg')
-
-        assert.equal($resultSvg.attr('xmlns'), 'http://www.w3.org/2000/svg')
-        assert.equal($resultSvg.attr('xmlns:xlink'), 'http://www.w3.org/1999/xlink')
+        assert.strictEqual($resultSvg.attr('xmlns'), 'http://www.w3.org/2000/svg')
+        assert.strictEqual($resultSvg.attr('xmlns:xlink'), 'http://www.w3.org/1999/xlink')
         done()
       })
 
@@ -303,15 +256,13 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.end()
-
   })
 
-  it('should not include duplicate namespaces into final svg', function (done) {
+  it('should not include duplicate namespaces into final svg', (done) => {
+      const stream = svgstore({ inlineSvg: true })
 
-      var stream = svgstore({ inlineSvg: true })
-
-      stream.on('data', function (file) {
-        assert.equal(
+      stream.on('data', (file) => {
+        assert.strictEqual(
           '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
           '<symbol id="rect"/><symbol id="sandwich"/></svg>',
           file.contents.toString()
@@ -334,15 +285,13 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.end()
-
   })
 
-  it('Warn about duplicate namespace value under different name', function (done) {
+  it('Warn about duplicate namespace value under different name', (done) => {
+      const stream = svgstore()
 
-      var stream = svgstore()
-
-      stream.on('data', function () {
-        assert.equal(
+      stream.on('data', () => {
+        assert.strictEqual(
           'Same namespace value under different names : xmlns:lk and xmlns:xlink.\n' +
           'Keeping both.',
           fancyLog.info.getCall(0).args[0]
@@ -371,19 +320,17 @@ describe('gulp-svgstore unit test', function () {
       }))
 
       stream.end()
-
   })
 
-  it('Strong warn about duplicate namespace name with different value', function (done) {
+  it('Strong warn about duplicate namespace name with different value', (done) => {
+      const stream = svgstore()
 
-      var stream = svgstore()
-
-      stream.on('data', function () {
-        assert.equal(
+      stream.on('data', () => {
+        assert.strictEqual(
           'xmlns:xlink namespace appeared multiple times with different value. ' +
           'Keeping the first one : "http://www.w3.org/1998/xlink".\n' +
-          'Each namespace must be unique across files.',
-          fancyLog.info.getCall(0).args[0]
+          'Each namespace must be unique across files.'
+        , fancyLog.info.getCall(0).args[0]
         )
         done()
       })
@@ -410,5 +357,4 @@ describe('gulp-svgstore unit test', function () {
 
       stream.end()
   })
-
 })

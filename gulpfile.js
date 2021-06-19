@@ -1,25 +1,20 @@
-var svgstore = require('./index')
-var gulp = require('gulp')
-var inject = require('gulp-inject')
+const svgstore = require('./index')
+const gulp = require('gulp')
+const inject = require('gulp-inject')
 
-
-gulp.task('external', function () {
-
-  return gulp
+gulp.task('external', () =>
+  gulp
     .src('test/src/*.svg')
     .pipe(svgstore())
     .pipe(gulp.dest('test/dest'))
+)
 
-})
-
-
-gulp.task('inline', function () {
-
-  function fileContents (filePath, file) {
+gulp.task('inline', () => {
+  function fileContents (_, file) {
     return file.contents.toString('utf8')
   }
 
-  var svgs = gulp
+  const svgs = gulp
     .src('test/src/*.svg')
     .pipe(svgstore({ inlineSvg: true }))
 
@@ -27,7 +22,6 @@ gulp.task('inline', function () {
     .src('test/src/inline-svg.html')
     .pipe(inject(svgs, { transform: fileContents }))
     .pipe(gulp.dest('test/dest'))
-
 })
 
-gulp.task('build', ['external', 'inline'])
+gulp.task('build', gulp.series(['external', 'inline']))
