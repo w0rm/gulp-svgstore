@@ -5,7 +5,7 @@ const fancyLog = require('fancy-log')
 const PluginError = require('plugin-error')
 const Vinyl = require('vinyl')
 
-const presentationAttributes = [
+const presentationAttributes = new Set([
   'style', 'alignment-baseline', 'baseline-shift', 'clip', 'clip-path',
   'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters',
   'color-profile', 'color-rendering', 'cursor', 'd', 'direction', 'display',
@@ -21,7 +21,7 @@ const presentationAttributes = [
   'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration',
   'text-rendering', 'transform', 'unicode-bidi', 'vector-effect', 'visibility',
   'word-spacing', 'writing-mode'
-];
+]);
 
 module.exports = function (config) {
 
@@ -131,7 +131,7 @@ module.exports = function (config) {
 
     let $groupWrap = null
     for (let [name, value] of Object.entries($svg.attr())) {
-      if (presentationAttributes.indexOf(name) === -1) continue;
+      if (!presentationAttributes.has(name)) continue;
       if (!$groupWrap) $groupWrap = $('<g/>')
       $groupWrap.attr(name, value)
     }
