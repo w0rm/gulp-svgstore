@@ -287,6 +287,30 @@ describe('gulp-svgstore unit test', () => {
       stream.end()
   })
 
+  it('should transfer svg presentation attributes to a wrapping g element', (done) => {
+      const stream = svgstore({ inlineSvg: true })
+      const attrs = 'stroke="currentColor" stroke-width="2" stroke-linecap="round" style="fill:#0000"';
+
+      stream.on('data', (file) => {
+        assert.strictEqual(
+          '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+          `<symbol id="rect"><g ${attrs}><rect width="1" height="1"/></g></symbol></svg>`,
+          file.contents.toString()
+        )
+        done()
+      })
+
+      stream.write(new Vinyl({
+        contents: Buffer.from(
+          `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ${attrs}>` +
+          '<rect width="1" height="1"/></svg>'
+        )
+      , path: 'rect.svg'
+      }))
+
+      stream.end()
+  })
+
   it('Warn about duplicate namespace value under different name', (done) => {
       const stream = svgstore()
 

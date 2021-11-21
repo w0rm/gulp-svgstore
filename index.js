@@ -5,6 +5,24 @@ const fancyLog = require('fancy-log')
 const PluginError = require('plugin-error')
 const Vinyl = require('vinyl')
 
+const presentationAttributes = new Set([
+  'style', 'alignment-baseline', 'baseline-shift', 'clip', 'clip-path',
+  'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters',
+  'color-profile', 'color-rendering', 'cursor', 'd', 'direction', 'display',
+  'dominant-baseline', 'enable-background', 'fill', 'fill-opacity', 'fill-rule',
+  'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size',
+  'font-size-adjust', 'font-stretch', 'font-style', 'font-variant',
+  'font-weight', 'glyph-orientation-horizontal', 'glyph-orientation-vertical',
+  'image-rendering', 'kerning', 'letter-spacing', 'lighting-color',
+  'marker-end', 'marker-mid', 'marker-start', 'mask', 'opacity', 'overflow',
+  'pointer-events', 'shape-rendering', 'solid-color', 'solid-opacity',
+  'stop-color', 'stop-opacity', 'stroke', 'stroke-dasharray',
+  'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit',
+  'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration',
+  'text-rendering', 'transform', 'unicode-bidi', 'vector-effect', 'visibility',
+  'word-spacing', 'writing-mode'
+]);
+
 module.exports = function (config) {
 
   config = config || {}
@@ -111,7 +129,19 @@ module.exports = function (config) {
       $defs.remove()
     }
 
-    $symbol.append($svg.contents())
+    let $groupWrap = null
+    for (let [name, value] of Object.entries($svg.attr())) {
+      if (!presentationAttributes.has(name)) continue;
+      if (!$groupWrap) $groupWrap = $('<g/>')
+      $groupWrap.attr(name, value)
+    }
+
+    if ($groupWrap) {
+      $groupWrap.append($svg.contents())
+      $symbol.append($groupWrap)
+    } else {
+      $symbol.append($svg.contents())
+    }
     $combinedSvg.append($symbol)
     cb()
   }
