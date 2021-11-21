@@ -1,6 +1,6 @@
 {
   "name": "gulp-svgstore",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "description": "Combine svg files into one with <symbol> elements",
   "main": "index.js",
   "files": [

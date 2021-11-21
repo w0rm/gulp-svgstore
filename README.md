@@ -292,6 +292,9 @@ Another possible solution would be to write a transformation with [gulp-cheerio]
 
 ## Changelog
 
+* 9.0.0
+  * transfer `<svg>` [presentation attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation) to a wrapping `<g>` element #110
+
 * 8.0.0
   * Update dependencies
   * Drop support for node < 10
