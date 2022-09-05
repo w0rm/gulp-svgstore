@@ -181,7 +181,7 @@ gulp.task('svgstore', () => {
             },
             parserOptions: { xmlMode: true }
         }))
-        .pipe(svgstore({ inlineSvg: true })
+        .pipe(svgstore({ inlineSvg: true }))
         .pipe(gulp.dest('test/dest'));
 });
 ```
